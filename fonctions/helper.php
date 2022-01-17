@@ -17,3 +17,8 @@ function nav_link(string $icone, string $lien, string $titre): string
     </li>
 HTML;
 }
+
+function includeCSS(string $nomFichier): string
+{
+    return "<link rel='stylesheet' href='../CSS/$nomFichier.css'>";
+}
