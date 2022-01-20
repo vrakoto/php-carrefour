@@ -1,5 +1,3 @@
-<?= includeCSS('inscription') ?>
-
 <?php if (isset($erreur)): ?>
     <div class="container text-center alert alert-danger">
         <?= $erreur ?>
@@ -13,9 +11,9 @@
                 <div class="form-items">
                     <h3>Connexion</h3>
                     
-                    <form action="/connexion" class="requires-validation" method="POST">
+                    <form action="index.php?p=connexion" class="requires-validation" method="POST">
                         <div class="col-md-12">
-                            <input class="form-control" type="text" name="id" placeholder="Identifiant" required>
+                            <input class="form-control" type="text" name="id" placeholder="Identifiant" autofocus required>
                         </div>
 
                         <div class="col-md-12">
@@ -23,7 +21,7 @@
                         </div>
 
                         <div class="form-button mt-3">
-                            <button id="submit" type="submit" class="btn btn-primary">S'inscrire</button>
+                            <button type="submit" class="btn btn-primary">S'inscrire</button>
                         </div>
                     </form>
 

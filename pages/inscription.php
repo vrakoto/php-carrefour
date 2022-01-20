@@ -1,5 +1,3 @@
-<?= includeCSS('inscription') ?>
-
 <?php if (isset($erreurs)): ?>
     <div class="container text-center alert alert-danger">
         <?= $erreur ?>
@@ -18,13 +16,13 @@
                 <div class="form-items">
                     <h3>Inscription</h3>
                     
-                    <form action="/inscription" class="requires-validation" method="POST" required>
+                    <form action="index.php?p=inscription" class="requires-validation" method="POST">
                         <div class="col-md-12">
-                            <input class="form-control" type="text" name="id" placeholder="Identifiant" required>
+                            <input class="form-control" type="text" name="id" placeholder="Identifiant" value="<?= keepInputValue('id') ?>" autofocus required>
                         </div>
 
                         <div class="col-md-12">
-                            <input class="form-control" type="text" name="ville" placeholder="Ville" required>
+                            <input class="form-control" type="text" name="ville" placeholder="Ville" value="<?= keepInputValue('ville') ?>" required>
                         </div>
 
                         <div class="col-md-12">
