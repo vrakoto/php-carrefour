@@ -1,5 +1,8 @@
 <?php
 session_start();
+$css = 'CSS' . DIRECTORY_SEPARATOR . 'main.css';
+$js = 'JS' . DIRECTORY_SEPARATOR . 'main.js';
+
 if (!isset($_REQUEST['p'])) {
     header("Location:index.php?p=accueil");
     exit();
@@ -21,33 +24,43 @@ $pdo = new Commun;
 // Gére les différents accès
 $access = [
     "accueil",
+    "produit",
     "connexion",
     "inscription",
     "produit"
 ];
 
 $sid = $_SESSION['id'] ?? '';
+$role = null;
+$credit = null;
+$nbProduitsPanier = 0;
+
 if (!empty($sid)) {
     $access = ["accueil", "produit", "deconnexion"];
     $role = $pdo->getRole($sid);
+
     switch ($role) {
         case 'CLIENT':
             array_push($access, "panier", "credit", "historiqueAchats", "notification");
             require_once $bdd . 'client' . DIRECTORY_SEPARATOR . 'Client.php';
             $client = new Client($sid);
+            $monSolde = $client->getMonSolde();
+            $credit = $monSolde . ' &euro;';
+            $nbProduitsPanier = (int)count($client->getMesProduits());
+            if ($page === 'ajax') {
+                require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'ajaxController' . DIRECTORY_SEPARATOR . 'client' . DIRECTORY_SEPARATOR . 'index.php';
+                exit();
+            }
         break;
 
         case 'ADMIN':
-            array_push($access, "listeProduits", "modifierProduit", "supprimerProduit", "listeCategories", "supprimerCategorie");
+            array_push($access, "listeProduits", "modifierProduit", "supprimerProduit", "listeCategories", "supprimerCategorie", "parametreAdmin");
             require_once $bdd . 'admin' . DIRECTORY_SEPARATOR . 'Admin.php';
             require_once $bdd . 'admin' . DIRECTORY_SEPARATOR . 'Produit.php';
             $admin = new Admin($sid);
         break;
     }
 }
-
-$css = 'CSS' . DIRECTORY_SEPARATOR . 'main.css';
-$js = 'JS' . DIRECTORY_SEPARATOR . 'main.js';
 
 require_once $fonctions . 'helper.php';
 require_once $elements . 'header.php';
@@ -92,6 +105,7 @@ switch ($page) {
                 $erreurs = $inscription->getErreurs();
             } else {
                 $inscription->inscrire();
+                $pdo->creerPanier($id);
                 header("Location:index.php?p=connexion");
                 exit();
             }
@@ -113,10 +127,6 @@ switch ($page) {
             require_once $pages . 'ficheProduit.php';
         }
     break;
-
-    case 'panier':
-        echo "panier";
-        break;
 
     // ADMIN
     case 'listeProduits':
@@ -260,12 +270,14 @@ switch ($page) {
 
     // CLIENT
     case 'panier':
+        $lesProduits = $client->getMesProduits();
+        $nbProduits = (int)count($lesProduits);
         require_once $pagesClient . 'panier.php';
     break;
 
     case 'credit':
+        $solde = $client->getMonSolde();
         require_once $pagesClient . 'credit.php';
-
     break;
 
     case 'historiqueAchats':

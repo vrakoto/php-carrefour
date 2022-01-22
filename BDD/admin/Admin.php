@@ -1,5 +1,4 @@
 <?php
-
 class Admin extends Commun {
     function __construct()
     {

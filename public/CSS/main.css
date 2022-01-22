@@ -162,9 +162,14 @@ body {
     min-height: 500px; */
 
     max-width: 260px;
-    max-height: 410px;
     min-width: 260px;
-    min-height: 410px;
+
+    max-height: 450px;
+    min-height: 450px;
+}
+
+#produit .hors-stock {
+    transform: rotate(45deg);
 }
 
 #produit .main-heading {

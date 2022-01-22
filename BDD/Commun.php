@@ -22,6 +22,15 @@ class Commun {
         return !empty($p->fetch()) && password_verify($mdp, $this->getUtilisateur($id)['mdp']);
     }
 
+    function creerPanier(string $idUtilisateur): bool
+    {
+        $req = "INSERT INTO panier (idUtilisateur, statut) VALUES (:idUtilisateur, 'EN COURS')";
+        $p = $this->pdo->prepare($req);
+        return $p->execute([
+            'idUtilisateur' => $idUtilisateur,
+        ]);
+    }
+
     function getUtilisateur($id): array
     {
         $req = "SELECT * FROM utilisateur WHERE id = :id";
