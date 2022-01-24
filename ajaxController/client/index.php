@@ -1,7 +1,6 @@
 <?php
 $action = $_REQUEST['action'];
 switch ($action) {
-
     case 'crediter':
         $erreur = '';
         $montant = (float)$_POST['montant'];
@@ -20,6 +19,28 @@ switch ($action) {
             } catch (\Throwable $th) {
                 $erreur = "Erreur général";
             }
+        }
+        echo $erreur;
+    break;
+
+    case 'notifierProduit':
+        $erreur = '';
+        $idProduit = (int)$_POST['idProduit'];
+        try {
+            $client->notifierProduit($idProduit);
+        } catch (\Throwable $th) {
+            $erreur = "Erreur général notification";
+        }
+        echo $erreur;
+    break;
+
+    case 'retirerNotification':
+        $erreur = '';
+        $idProduit = (int)$_POST['idProduit'];
+        try {
+            $client->retirerNotification($idProduit);
+        } catch (\Throwable $th) {
+            $erreur = "Erreur général notification";
         }
         echo $erreur;
     break;
@@ -110,7 +131,6 @@ switch ($action) {
             $idProduit = (int)$produit['idProduit'];
             $prixUnit = (float)$pdo->getLeProduit($idProduit)['prixUnit'];
             $quantite = (int)$produit['quantite'];
-            $client->updateQuantiteProduit($idProduit, $quantite);
             $sums[] = ($prixUnit*$quantite);
         }
         $total = array_sum($sums);
@@ -124,6 +144,11 @@ switch ($action) {
                 $client->payer();
                 $pdo->creerPanier($sid);
                 $client->retirerCredit(array_sum($sums));
+                foreach ($lesProduits as $produit) {
+                    $idProduit = (int)$produit['idProduit'];
+                    $quantite = (int)$produit['quantite'];
+                    $client->updateQuantiteProduit($idProduit, $quantite);
+                }
             } catch (\Throwable $th) {
                 $erreur = "Erreur lors de l'achat";
             }

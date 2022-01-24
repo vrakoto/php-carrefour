@@ -1,8 +1,16 @@
 <div class="d-flex justify-content-center align-items-center ms-5 text-center" id="produit">
     <div class="d-flex justify-content-evenly card p-3">
         <?php if (!$produitDisponible): $opacity = "opacity-25"; ?>
+            <?php if (isset($produitNotifier)): ?>
+                <?php if (!$produitNotifier): ?>
+                    <i class="position-absolute fas fa-bell fa-2x notification text-primary" onclick="notifierProduit(<?= $id ?>, this)"></i>
+                <?php else: ?>
+                    <i class='position-absolute fas fa-bell-slash fa-2x notification retirerNotification text-danger' onclick='retirerNotification(<?= $id ?>, this)'></i>
+                <?php endif ?>
+            <?php endif ?>
             <h1 class="position-absolute hors-stock">HORS STOCK</h1>
         <?php endif ?>
+
         <div class="<?= $opacity ?>">
             <h4 class="text-uppercase"><?= $categorie ?></h4>
             <div class="text-center">

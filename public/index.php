@@ -281,11 +281,31 @@ switch ($page) {
     break;
 
     case 'historiqueAchats':
-        require_once $pagesClient . 'historiqueAchats.php';
+        $mesAchatsPanier = $client->getMesPaniersAchats();
 
+        // Consulter détails panier
+        if (isset($_REQUEST['id'])) {
+            $idPanier = (int)$_REQUEST['id'];
+            $lesProduits = $client->getLesProduitsPanier($idPanier);
+            $sums = [];
+            foreach ($lesProduits as $produit) {
+                $id = (int)$produit['idProduit'];
+                require $elements . 'varProduit.php';
+                $quantiteUtilisateur = (int)$produit['quantite'];
+                $totalProduit = ($quantiteUtilisateur*$prixUnit);
+                $sums[] = ($quantiteUtilisateur*$prixUnit);
+                require $pagesClient . 'detailsAchat.php';
+            }
+            $total = array_sum($sums);
+            echo "<h4 class='mt-5'>Total TTC : " . number_format($total, 0, ',', ' ') . " &euro;</h4>";
+        } else {
+            require_once $pagesClient . 'historiqueAchats.php';
+        }
     break;
 
     case 'notification':
+        $mesNotifications = $client->getMesNotifications();
+        $produitsArrives = $client->getLesProduitsArrives();
         require_once $pagesClient . 'notification.php';
     break;
 

@@ -168,6 +168,12 @@ body {
     min-height: 450px;
 }
 
+#produit .notification {
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+}
+
 #produit .hors-stock {
     transform: rotate(45deg);
 }

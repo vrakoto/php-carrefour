@@ -85,6 +85,48 @@ function crediter() {
   });
 }
 
+function notifierProduit(idProduit, produitActuel) {
+  $.ajax({
+    method: 'post',
+    url: 'index.php?p=ajax&action=notifierProduit',
+    data: 'idProduit=' + idProduit,
+    success: (error) => {
+      if (error) {
+        $('#messageModal').modal('show');
+        $('#messageModal .modal-title').text("Erreur lors de la notification du produit");
+      } else {
+        $(produitActuel).remove();
+        $('#messageModal').modal('show');
+        $('#messageModal .modal-title').text("Produit notifié avec succès");
+      }
+    },
+    error: (e) => {
+      console.log("Erreur internal notification");
+    }
+  });
+}
+
+function retirerNotification(idProduit, produitActuel) {
+  $.ajax({
+    method: 'post',
+    url: 'index.php?p=ajax&action=retirerNotification',
+    data: 'idProduit=' + idProduit,
+    success: (error) => {
+      if (error) {
+        $('#messageModal').modal('show');
+        $('#messageModal .modal-title').text("Erreur lors de la suppression de la notification");
+      } else {
+        $(produitActuel).remove();
+        $('#messageModal').modal('show');
+        $('#messageModal .modal-title').text("Notification du produit retiré avec succès");
+      }
+    },
+    error: (e) => {
+      console.log("Erreur internal notification");
+    }
+  });
+}
+
 function updateQuantite(idProduit, prixUnit, produitActuel) {
   const qtyUser = $(produitActuel).closest('.leProduit-panier').find('.quantiteUtilisateur').val();
   $.ajax({

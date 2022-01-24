@@ -39,6 +39,22 @@ class Client extends Commun {
         return $p->fetch();
     }
 
+    function getLesProduitsPanier(int $idPanier): array
+    {
+        $req = "SELECT * FROM produit_panier
+                WHERE idPanier = (SELECT id FROM panier
+                                WHERE id = :idPanier
+                                AND idUtilisateur = :utilisateurActuel
+                                AND statut = 'VENDU')";
+        $p = $this->pdo->prepare($req);
+        $p->execute([
+            'idPanier' => $idPanier,
+            'utilisateurActuel' => $_SESSION['id']
+        ]);
+
+        return $p->fetchAll();
+    }
+
     // Dans mon panier
     function getMesProduits(): array
     {
@@ -93,9 +109,9 @@ class Client extends Commun {
 
     function payer(): bool
     {
-        $req = "UPDATE panier SET statut = 'VENDU'
-                WHERE statut = 'EN COURS'
-                AND idUtilisateur = :utilisateurActuel";
+        $req = "UPDATE panier SET statut = 'VENDU', date = date('now')
+                WHERE idUtilisateur = :utilisateurActuel
+                AND statut = 'EN COURS'";
         $p = $this->pdo->prepare($req);
         $p->execute([
             'utilisateurActuel' => $_SESSION['id']
@@ -132,5 +148,97 @@ class Client extends Commun {
             'total' => $total,
             'utilisateurActuel' => $_SESSION['id']
         ]);
+    }
+
+    
+    function getMesPaniersAchats(): array
+    {
+        $req = "SELECT id, date FROM panier
+                WHERE idUtilisateur = :utilisateurActuel
+                AND statut = 'VENDU'
+                ORDER BY date DESC";
+        $p = $this->pdo->prepare($req);
+        $p->execute([
+            'utilisateurActuel' => $_SESSION['id']
+        ]);
+        
+        return $p->fetchAll();
+    }
+
+    function getMesProduitsAchat(): array
+    {
+        $req = "SELECT * FROM produit_panier
+                WHERE idPanier =
+                    (SELECT id FROM panier
+                    WHERE idUtilisateur = :utilisateurActuel
+                    AND statut = 'VENDU')";
+        $p = $this->pdo->prepare($req);
+        $p->execute([
+            'utilisateurActuel' => $_SESSION['id']
+        ]);
+        
+        return $p->fetchAll();
+    }
+
+    
+    function notifierProduit(int $idProduit): bool
+    {
+        $req = "INSERT INTO notification (idProduit, idUtilisateur) VALUES (:idProduit, :utilisateurActuel)";
+        $p = $this->pdo->prepare($req);
+        return $p->execute([
+            'idProduit' => $idProduit,
+            'utilisateurActuel' => $_SESSION['id']
+        ]);
+    }
+
+    function retirerNotification(int $idProduit): bool
+    {
+        $req = "DELETE FROM notification WHERE idProduit = :idProduit AND idUtilisateur = :utilisateurActuel";
+        $p = $this->pdo->prepare($req);
+        return $p->execute([
+            'idProduit' => $idProduit,
+            'utilisateurActuel' => $_SESSION['id']
+        ]);
+    }
+
+    function estNotifier(int $idProduit): bool
+    {
+        $req = "SELECT idProduit FROM notification
+                WHERE idProduit = :idProduit
+                AND idUtilisateur = :utilisateurActuel";
+        $p = $this->pdo->prepare($req);
+        $p->execute([
+            'idProduit' => $idProduit,
+            'utilisateurActuel' => $_SESSION['id']
+        ]);
+
+        return !empty($p->fetch());
+    }
+
+    function getMesNotifications(): array
+    {
+        $req = "SELECT * FROM notification
+                WHERE idUtilisateur = :utilisateurActuel
+                AND idProduit IN (SELECT id FROM produit WHERE quantite = 0)";
+        $p = $this->pdo->prepare($req);
+        $p->execute([
+            'utilisateurActuel' => $_SESSION['id']
+        ]);
+
+        return $p->fetchAll();
+    }
+
+    function getLesProduitsArrives(): array
+    {
+        $req = "SELECT * FROM notification
+                JOIN produit on produit.id = notification.idProduit
+                WHERE idUtilisateur = :utilisateurActuel
+                AND idProduit IN (SELECT id FROM produit WHERE quantite > 0)";
+        $p = $this->pdo->prepare($req);
+        $p->execute([
+            'utilisateurActuel' => $_SESSION['id']
+        ]);
+
+        return $p->fetchAll();
     }
 }
