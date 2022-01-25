@@ -4,36 +4,36 @@ $(function () {
   switch (page) {
     case 'accueil':
       titre += " - Accueil";
-    break;
+      break;
 
     case 'panier':
       titre += " - Mon panier";
-    break;
+      break;
 
     case 'credit':
       titre += " - Ajouter Crédit";
-    break;
+      break;
 
     case 'historiqueAchats':
       titre += " - Mes historiques d'Achats";
-    break;
+      break;
 
     case 'notification':
       titre += " - Mes notifications";
-    break;
+      break;
 
     // ADMIN
     case 'listeProduits':
       titre += " - Liste des produits";
-    break;
+      break;
 
     case 'listeCategories':
       titre += " - Liste des catégories";
-    break;
+      break;
 
     default:
       titre += " - Erreur 404";
-    break;
+      break;
   }
   document.title = titre;
 
@@ -41,7 +41,7 @@ $(function () {
   $('#sidebarCollapse').on('click', function () {
     $('#sidebar, #content').toggleClass('active');
   });
-  
+
   updatePanier();
 });
 
@@ -139,7 +139,7 @@ function updateQuantite(idProduit, prixUnit, produitActuel) {
         $('#messageModal .modal-title').text("Erreur lors du changement de quantité");
         $('#messageModal .modal-body').text(error);
       } else {
-        $(produitActuel).closest('.leProduit-panier').find('.totalProduit').text(parseFloat(($(produitActuel).val()*prixUnit).toFixed(2)));
+        $(produitActuel).closest('.leProduit-panier').find('.totalProduit').text(parseFloat(($(produitActuel).val() * prixUnit).toFixed(2)));
         updatePanier();
       }
     },
@@ -199,7 +199,7 @@ function updatePanier() {
   if (lesProduits.length <= 0) {
     $('#payer').parent().remove();
   }
-  
+
   $.ajax({
     method: 'post',
     url: 'index.php?p=ajax&action=updateTotal',
@@ -227,6 +227,61 @@ function payer() {
     },
     error: (e) => {
       console.log("Erreur internal paiement");
+    }
+  });
+}
+
+/* Partie Avis */
+var idProduitAvis = '';
+function structureAvis(idProduit) {
+  idProduitAvis = idProduit;
+  $('.avis-lesProduits').css({display: "none"});
+  $('.structureAvis').addClass('toggleStructureAvis');
+}
+
+$("input[type='radio']").click(function () {
+  const sim = $("input[type='radio']:checked").val();
+  const ratingText = $('.myratings');
+
+  if (sim < 3) {
+    ratingText.css('color', 'red');
+    ratingText.text(sim);
+  } else {
+    ratingText.css('color', 'green');
+    ratingText.text(sim);
+  }
+});
+
+function retourListeProduitsAvis() {
+  $(".myratings").empty();
+  $("#commentaire").val('');
+  $("input[type='radio']").prop('checked', false);
+  $('.structureAvis').removeClass('toggleStructureAvis');
+  $('.avis-lesProduits').css({display: "block"});
+}
+
+function envoyerAvis() {
+  const commentaire = $('#commentaire').val();
+  const note = $("input[type='radio']:checked").val();
+
+  $.ajax({
+    method: 'post',
+    url: 'index.php?p=ajax&action=envoyerAvis',
+    data: 'idProduit=' + idProduitAvis + '&commentaire=' + commentaire + '&note=' + note,
+    success: (error) => {
+      if (error) {
+        $('#messageModal').modal('show');
+        $('#messageModal .modal-title').text("Erreur lors de l'envoie de l'avis");
+        $('#messageModal .modal-body').text(error);
+      } else {
+        $('#messageModal').modal('show');
+        $('#messageModal .modal-title').text("Merci pour votre avis");
+        // updateListeProduitsAvis();
+        retourListeProduitsAvis();
+      }
+    },
+    error: (e) => {
+      console.log("Erreur internal avis");
     }
   });
 }

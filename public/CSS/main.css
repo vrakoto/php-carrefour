@@ -156,16 +156,11 @@ body {
 }
 
 #produit .card {
-    /* max-width: 350px;
-    max-height: 500px;
-    min-width: 350px;
-    min-height: 500px; */
-
     max-width: 260px;
     min-width: 260px;
 
-    max-height: 450px;
-    min-height: 450px;
+    max-height: 470px;
+    min-height: 470px;
 }
 
 #produit .notification {
@@ -188,8 +183,12 @@ body {
     height: 105px;
 }
 
-#produit .ratings i {
-    color: orange
+.ratings i {
+    color: orange;
+}
+
+.ratings .noteRestante {
+    color: #cecece;
 }
 
 #produit .user-ratings h6 {
@@ -204,6 +203,148 @@ body {
     display: block !important;
 }
 
-@media screen and (max-width: 410px) {
-    
+
+/* AVIS */
+.btn-grey {
+    background-color: #D8D8D8;
+    color: #FFF;
 }
+
+.rating-block {
+    background-color: #FAFAFA;
+    border: 1px solid #EFEFEF;
+    padding: 15px 15px 20px 15px;
+    border-radius: 3px;
+}
+
+.bold {
+    font-weight: 700;
+}
+
+.padding-bottom-7 {
+    padding-bottom: 7px;
+}
+
+.review-block {
+    background-color: #FAFAFA;
+    border: 1px solid #EFEFEF;
+    padding: 15px;
+    border-radius: 3px;
+    margin-bottom: 15px;
+}
+
+.review-block-name {
+    font-size: 12px;
+    margin: 10px 0;
+}
+
+.review-block-date {
+    font-size: 12px;
+}
+
+.review-block-rate {
+    font-size: 13px;
+    margin-bottom: 15px;
+}
+
+.review-block-description {
+    font-size: 13px;
+}
+
+
+/* EMETTRE AVIS */
+.toggleStructureAvis {
+    display: block !important;
+}
+
+.avisProduit {
+    max-width: 400px;
+    cursor: pointer;
+}
+
+.avisProduit:hover {
+    box-shadow: 10px 10px 10px 10px #333;
+}
+
+
+.rating {
+    border: none;
+    margin-right: 49px
+}
+
+.myratings {
+    font-size: 85px;
+    color: green
+}
+
+.rating>[id^="star"] {
+    display: none
+}
+
+.rating>label:before {
+    margin: 5px;
+    font-size: 2.25em;
+    font-family: FontAwesome;
+    display: inline-block;
+    content: "\f005"
+}
+
+.rating>.half:before {
+    content: "\f089";
+    position: absolute
+}
+
+.rating>label {
+    color: #ddd;
+    float: right
+}
+
+.rating>[id^="star"]:checked~label,
+.rating:not(:checked)>label:hover,
+.rating:not(:checked)>label:hover~label {
+    color: #FFD700
+}
+
+.rating>[id^="star"]:checked+label:hover,
+.rating>[id^="star"]:checked~label:hover,
+.rating>label:hover~[id^="star"]:checked~label,
+.rating>[id^="star"]:checked~label:hover~label {
+    color: #FFED85
+}
+
+.reset-button {
+    margin: 6px 12px;
+    background-color: rgb(255, 255, 255);
+    text-transform: uppercase
+}
+
+.mt-100 {
+    margin-top: 100px
+}
+
+.card {
+    position: relative;
+    display: flex;
+    width: 350px;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid #d2d2dc;
+    border-radius: 11px;
+    -webkit-box-shadow: 0px 0px 5px 0px rgb(249, 249, 250);
+    -moz-box-shadow: 0px 0px 5px 0px rgba(212, 182, 212, 1);
+    box-shadow: 0px 0px 5px 0px rgb(161, 163, 164)
+}
+
+.card .card-body {
+    padding: 1rem 1rem
+}
+
+.card-body {
+    flex: 1 1 auto;
+    padding: 1.25rem
+}
+
+@media screen and (max-width: 410px) {}

@@ -12,3 +12,7 @@ if ($role === 'CLIENT') {
 }
 $prixUnit = (float)$leProduit['prixUnit'];
 $description = htmlentities($leProduit['description']);
+$noteMoyenne = (float)$pdo->getInfosAvis($id)['noteMoyenne'];
+$nbAvis = (int)$pdo->getInfosAvis($id)['nbAvis'];
+
+$phraseAvis = $nbAvis > 0 ? $noteMoyenne . '/5' . '('. $nbAvis . 'avis)' : 'Aucun avis';

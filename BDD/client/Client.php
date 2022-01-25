@@ -39,7 +39,36 @@ class Client extends Commun {
         return $p->fetch();
     }
 
-    function getLesProduitsPanier(int $idPanier): array
+    function getMesPaniersAchats(): array
+    {
+        $req = "SELECT id, date FROM panier
+                WHERE idUtilisateur = :utilisateurActuel
+                AND statut = 'VENDU'
+                ORDER BY id DESC";
+        $p = $this->pdo->prepare($req);
+        $p->execute([
+            'utilisateurActuel' => $_SESSION['id']
+        ]);
+        
+        return $p->fetchAll();
+    }
+
+    function getLesProduitsPanier(): array
+    {
+        $req = "SELECT * FROM produit_panier
+                WHERE idPanier =
+                    (SELECT id FROM panier
+                    WHERE idUtilisateur = :utilisateurActuel
+                    AND statut = 'EN COURS')";
+        $p = $this->pdo->prepare($req);
+        $p->execute([
+            'utilisateurActuel' => $_SESSION['id']
+        ]);
+        
+        return $p->fetchAll();
+    }
+
+    function getLesProduitsPanierAchetes(int $idPanier): array
     {
         $req = "SELECT * FROM produit_panier
                 WHERE idPanier = (SELECT id FROM panier
@@ -55,21 +84,6 @@ class Client extends Commun {
         return $p->fetchAll();
     }
 
-    // Dans mon panier
-    function getMesProduits(): array
-    {
-        $req = "SELECT * FROM produit_panier
-                WHERE idPanier =
-                    (SELECT id FROM panier
-                    WHERE idUtilisateur = :utilisateurActuel
-                    AND statut = 'EN COURS')";
-        $p = $this->pdo->prepare($req);
-        $p->execute([
-            'utilisateurActuel' => $_SESSION['id']
-        ]);
-        
-        return $p->fetchAll();
-    }
 
     function ajouterProduitPanier(int $idPanier, int $idProduit, int $quantite): bool
     {
@@ -151,27 +165,18 @@ class Client extends Commun {
     }
 
     
-    function getMesPaniersAchats(): array
+    function listeProduitsAchetes(): array
     {
-        $req = "SELECT id, date FROM panier
-                WHERE idUtilisateur = :utilisateurActuel
-                AND statut = 'VENDU'
-                ORDER BY date DESC";
-        $p = $this->pdo->prepare($req);
-        $p->execute([
-            'utilisateurActuel' => $_SESSION['id']
-        ]);
-        
-        return $p->fetchAll();
-    }
-
-    function getMesProduitsAchat(): array
-    {
-        $req = "SELECT * FROM produit_panier
-                WHERE idPanier =
+        $req = "SELECT idProduit FROM produit_panier
+                WHERE idPanier IN
                     (SELECT id FROM panier
                     WHERE idUtilisateur = :utilisateurActuel
-                    AND statut = 'VENDU')";
+                    AND statut = 'VENDU')
+                AND NOT idProduit IN
+                    (SELECT idProduit FROM avis
+                    WHERE idUtilisateur = :utilisateurActuel)
+                GROUP BY idProduit";
+
         $p = $this->pdo->prepare($req);
         $p->execute([
             'utilisateurActuel' => $_SESSION['id']
@@ -180,7 +185,6 @@ class Client extends Commun {
         return $p->fetchAll();
     }
 
-    
     function notifierProduit(int $idProduit): bool
     {
         $req = "INSERT INTO notification (idProduit, idUtilisateur) VALUES (:idProduit, :utilisateurActuel)";
@@ -240,5 +244,24 @@ class Client extends Commun {
         ]);
 
         return $p->fetchAll();
+    }
+
+
+    /* function getLes(int $idProduit): array
+    {
+
+    } */
+
+    
+    function envoyerAvis(int $idProduit, $commentaire, $note): bool
+    {
+        $req = "INSERT INTO avis (idProduit, idUtilisateur, commentaire, note) VALUES (:idProduit, :utilisateurActuel, :commentaire, :note)";
+        $p = $this->pdo->prepare($req);
+        return $p->execute([
+            'idProduit' => $idProduit,
+            'utilisateurActuel' => $_SESSION['id'],
+            'commentaire' => $commentaire,
+            'note' => $note
+        ]);
     }
 }

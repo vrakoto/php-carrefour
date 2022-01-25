@@ -25,6 +25,7 @@ $pdo = new Commun;
 $access = [
     "accueil",
     "produit",
+    "avis",
     "connexion",
     "inscription",
     "produit"
@@ -36,17 +37,17 @@ $credit = null;
 $nbProduitsPanier = 0;
 
 if (!empty($sid)) {
-    $access = ["accueil", "produit", "deconnexion"];
+    $access = ["accueil", "produit", "avis", "deconnexion"];
     $role = $pdo->getRole($sid);
 
     switch ($role) {
         case 'CLIENT':
-            array_push($access, "panier", "credit", "historiqueAchats", "notification");
+            array_push($access, "panier", "credit", "historiqueAchats", "donnerAvis", "notification");
             require_once $bdd . 'client' . DIRECTORY_SEPARATOR . 'Client.php';
             $client = new Client($sid);
             $monSolde = $client->getMonSolde();
             $credit = $monSolde . ' &euro;';
-            $nbProduitsPanier = (int)count($client->getMesProduits());
+            $nbProduitsPanier = (int)count($client->getLesProduitsPanier());
             if ($page === 'ajax') {
                 require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'ajaxController' . DIRECTORY_SEPARATOR . 'client' . DIRECTORY_SEPARATOR . 'index.php';
                 exit();
@@ -125,6 +126,21 @@ switch ($page) {
                 exit();
             }
             require_once $pages . 'ficheProduit.php';
+        }
+    break;
+
+    case 'avis':
+        if (isset($_GET['id'])) {
+            $idProduit = (int)$_GET['id'];
+
+            $lesAvis = $pdo->getLesAvis($idProduit);
+            if (count($lesAvis) <= 0) {
+                echo "<h4>Aucun avis sur ce produit</h4>";
+            } else {
+                $noteMoyenne = (float)$pdo->getInfosAvis($idProduit)['noteMoyenne'];
+                $noteRestante = (int)(5-$noteMoyenne);
+                require_once $pages . 'avis.php';
+            }
         }
     break;
 
@@ -270,7 +286,7 @@ switch ($page) {
 
     // CLIENT
     case 'panier':
-        $lesProduits = $client->getMesProduits();
+        $lesProduits = $client->getLesProduitsPanier();
         $nbProduits = (int)count($lesProduits);
         require_once $pagesClient . 'panier.php';
     break;
@@ -284,9 +300,9 @@ switch ($page) {
         $mesAchatsPanier = $client->getMesPaniersAchats();
 
         // Consulter détails panier
-        if (isset($_REQUEST['id'])) {
-            $idPanier = (int)$_REQUEST['id'];
-            $lesProduits = $client->getLesProduitsPanier($idPanier);
+        if (isset($_GET['id'])) {
+            $idPanier = (int)$_GET['id'];
+            $lesProduits = $client->getLesProduitsPanierAchetes($idPanier);
             $sums = [];
             foreach ($lesProduits as $produit) {
                 $id = (int)$produit['idProduit'];
@@ -296,11 +312,17 @@ switch ($page) {
                 $sums[] = ($quantiteUtilisateur*$prixUnit);
                 require $pagesClient . 'detailsAchat.php';
             }
-            $total = array_sum($sums);
-            echo "<h4 class='mt-5'>Total TTC : " . number_format($total, 0, ',', ' ') . " &euro;</h4>";
+            $total = floor((array_sum($sums)*100))/100;
+            echo "<h4 class='mt-5'>Total TTC : " . $total . " &euro;</h4>";
         } else {
             require_once $pagesClient . 'historiqueAchats.php';
         }
+    break;
+
+    case 'donnerAvis':
+        $lesProduits = $client->listeProduitsAchetes();
+        $titre = (int)count($lesProduits) > 0 ? "Sélectionnez un produit" : "Aucun produit disponible pour émettre un avis";
+        require_once $pagesClient . 'donnerAvis.php';
     break;
 
     case 'notification':

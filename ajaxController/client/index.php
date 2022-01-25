@@ -111,7 +111,7 @@ switch ($action) {
 
     case 'updateTotal':
         $idPanier = (int)$client->getMonPanier()['id'];
-        $lesProduits = (array)$client->getMesProduits();
+        $lesProduits = (array)$client->getLesProduitsPanier();
 
         (float)$sums = [];
         foreach ($lesProduits as $produit) {
@@ -126,7 +126,7 @@ switch ($action) {
     case 'payer':
         $erreur = '';
         $sums = [];
-        $lesProduits = (array)$client->getMesProduits();
+        $lesProduits = (array)$client->getLesProduitsPanier();
         foreach ($lesProduits as $produit) {
             $idProduit = (int)$produit['idProduit'];
             $prixUnit = (float)$pdo->getLeProduit($idProduit)['prixUnit'];
@@ -151,6 +151,30 @@ switch ($action) {
                 }
             } catch (\Throwable $th) {
                 $erreur = "Erreur lors de l'achat";
+            }
+        }
+        echo $erreur;
+    break;
+
+    case 'envoyerAvis':
+        $erreur = '';
+        $idProduit = (int)$_POST['idProduit'];
+        $commentaire = htmlentities($_POST['commentaire']);
+        $note = (int)$_POST['note'];
+
+        if (empty($pdo->getLeProduit($idProduit)['id'])) {
+            $erreur = "Produit inexistant";
+        }
+
+        if ($note <= 0 || $note > 5) {
+            $erreur = "La note ne doit pas être inférieur ou égal à 0 ni supérieur à 5";
+        }
+
+        if (empty($erreur)) {
+            try {
+                $client->envoyerAvis($idProduit, $commentaire, $note);
+            } catch (\Throwable $th) {
+                $erreur = "Erreur général";
             }
         }
         echo $erreur;

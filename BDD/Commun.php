@@ -90,15 +90,34 @@ class Commun {
         return $p->fetchAll();
     }
 
-    function getLeProduit(string $id): array
+    function getLeProduit(int $idProduit): array
     {
-        $req = "SELECT * FROM produit WHERE id = :id";
+        $req = "SELECT * FROM produit WHERE id = :idProduit";
         $p = $this->pdo->prepare($req);
         $p->execute([
-            'id' => $id
+            'idProduit' => $idProduit
         ]);
         return $p->fetch();
     }
 
-    
+    function getLesAvis(int $idProduit): array
+    {
+        $req = "SELECT * FROM avis WHERE idProduit = :idProduit";
+        $p = $this->pdo->prepare($req);
+        $p->execute([
+            'idProduit' => $idProduit
+        ]);
+        return $p->fetchAll();
+    }
+
+    function getInfosAvis(int $idProduit): array
+    {
+        $req = "SELECT COUNT(*) as nbAvis, ROUND(SUM(note)/COUNT(*)) as noteMoyenne
+                FROM avis WHERE idProduit = :idProduit";
+        $p = $this->pdo->prepare($req);
+        $p->execute([
+            'idProduit' => $idProduit
+        ]);
+        return $p->fetch();
+    }
 }

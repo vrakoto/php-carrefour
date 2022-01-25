@@ -34,8 +34,8 @@
             <?php else : ?>
                 <?php if ($role === 'CLIENT') : ?>
                     <?= nav_link('fas fa-shopping-cart', 'panier', 'Mon panier') ?>
-                    <?= nav_link('far fa-credit-card', 'credit', 'Ajouter du crédit') ?>
                     <?= nav_link('fas fa-book', 'historiqueAchats', "Mes historiques d'achats") ?>
+                    <?= nav_link('fas fa-star-half-alt', 'donnerAvis', "Donner avis produit") ?>
                     <?= nav_link('fas fa-bell', 'notification', "Notification") ?>
                     <?php else : if ($role === 'ADMIN') : ?>
                         <?= nav_link('fas fa-list', 'listeProduits', 'Liste des produits') ?>
@@ -43,6 +43,7 @@
                     <?php endif ?>
                 <?php endif ?>
                 <hr class="mb-0 mt-2">
+                <?= nav_link('far fa-credit-card', 'credit', 'Ajouter du crédit') ?>
                 <?= nav_link('fas fa-sign-out-alt', 'deconnexion', 'Se déconnecter') ?>
             <?php endif ?>
         </ul>

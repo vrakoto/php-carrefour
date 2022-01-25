@@ -22,15 +22,14 @@
             <h1 class="main-heading mb-0"><?= $ref ?></h1>
             <p><?= $description ?></p>
             <p><?= $prixUnit ?> &euro;</p>
-            <div class="d-flex justify-content-center flex-row user-ratings">
+            <div class="d-flex justify-content-center user-ratings">
                 <div class="ratings">
-                    <i class="fa fa-star"></i>
-                    <i class="fa fa-star"></i>
-                    <i class="fa fa-star"></i>
-                    <i class="fa fa-star"></i>
+                    <?php for ($i = 1; $i <= $noteMoyenne; $i++): ?>
+                        <i class="fa fa-star"></i>
+                    <?php endfor ?>
                 </div>
-                <a href="/avis" class="text-muted mx-1">4/5</a>
             </div>
+            <a href="index.php?p=avis&id=<?= $id ?>" class="text-muted mx-1"><?= $phraseAvis ?></a>
 
             <?php if ($role === 'CLIENT' && $produitDisponible && !$client->produitExistantPanier($id)): ?>
                 <div id="interaction">
