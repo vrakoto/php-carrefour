@@ -24,6 +24,7 @@
         $idUtilisateur = htmlentities($avis['idUtilisateur']);
         $commentaire = $avis['commentaire'];
         $note = (int)$avis['note'];
+        $date = htmlentities($avis['date']);
         require $elements . 'varProduit.php';
     ?>
         <div class="row">
@@ -32,9 +33,8 @@
                 <div class="review-block">
                     <div class="row">
                         <div class="col-sm-3">
-                            <img src="http://dummyimage.com/60x60/666/ffffff&text=No+Image" class="img-rounded">
-                            <div class="review-block-name"><a href="#"><?= $idUtilisateur ?></a></div>
-                            <div class="review-block-date">January 29, 2016<br />1 day ago</div>
+                            <div class="review-block-name"><?= $idUtilisateur ?></div>
+                            <div class="review-block-date"><?= convertDate($date, TRUE) ?></div>
                         </div>
                         <div class="col-sm-9">
                             <div class="ratings">

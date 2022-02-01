@@ -18,7 +18,7 @@
                         ?>
                             <tr>
                                 <td><?= $id ?></td>
-                                <td id="dateAchat"><?= $dateAchat ?></td>
+                                <td id="dateAchat"><?= convertDate($dateAchat, TRUE) ?></td>
                                 <td>
                                     <a href="index.php?p=historiqueAchats&id=<?= $id ?>" class="btn btn-primary">Voir en détail</a>
                                 </td>

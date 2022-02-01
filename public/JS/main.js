@@ -4,36 +4,40 @@ $(function () {
   switch (page) {
     case 'accueil':
       titre += " - Accueil";
-      break;
+    break;
 
     case 'panier':
       titre += " - Mon panier";
-      break;
+    break;
 
     case 'credit':
       titre += " - Ajouter Crédit";
-      break;
+    break;
 
     case 'historiqueAchats':
-      titre += " - Mes historiques d'Achats";
-      break;
+      titre += " - Historiques Achats";
+    break;
+
+    case 'donnerAvis':
+      titre += " - Donner un Avis";
+    break;
 
     case 'notification':
-      titre += " - Mes notifications";
-      break;
+      titre += " - Mes Notifications";
+    break;
 
     // ADMIN
     case 'listeProduits':
       titre += " - Liste des produits";
-      break;
+    break;
 
     case 'listeCategories':
       titre += " - Liste des catégories";
-      break;
+    break;
 
     default:
       titre += " - Erreur 404";
-      break;
+    break;
   }
   document.title = titre;
 
@@ -42,23 +46,62 @@ $(function () {
     $('#sidebar, #content').toggleClass('active');
   });
 
+  $('#fermerMenu').on('click', function () {
+    $('#sidebar').removeClass('active');
+  });
+
   updatePanier();
 });
 
 
+// partie admin
 $('#rechercherProduit').on('input', function () {
   const input = $(this).val();
   const inputFilter = input.toLowerCase();
 
   $('.leProduit').each(function () {
     const leNom = $(this).find('.leProduit-nom').text().toLowerCase();
-    if (!leNom.includes(inputFilter)) {
-      $(this).addClass("filtrerRechercheProduit");
-    } else {
-      $(this).removeClass("filtrerRechercheProduit");
+    if (leNom) {
+      if (!leNom.includes(inputFilter)) {
+        $(this).addClass("filtrerRechercheProduit");
+      } else {
+        $(this).removeClass("filtrerRechercheProduit");
+      }
     }
   });
+});
 
+// partie accueil
+$('#btnSearchProduct').on('click', function () {
+  const laRecherche = $('#searchProduct').val();
+  $.ajax({
+    method: 'post',
+    url: 'index.php?p=ajax&action=rechercherProduit',
+    data: 'q=' + laRecherche,
+    success: (data) => {
+      let error = true;
+      try {
+        JSON.parse(data);
+      } catch (e) {
+        error = false;
+      }
+
+      if (error) {
+        const msg = JSON.parse(data).msg;
+        $('#messageModal').modal('show');
+        $('#messageModal .modal-title').text("Erreur lors de la recherche");
+        $('#messageModal .modal-body').text(msg);
+      } else {
+        $('.categories-populaires').remove();
+        $('.categories-populaires').append(data);
+        $('#lesRecherches').empty();
+        $('#lesRecherches').append(data);
+      }
+    },
+    error: (e) => {
+      console.log("Erreur internal recherche");
+    }
+  });
 });
 
 
@@ -235,7 +278,7 @@ function payer() {
 var idProduitAvis = '';
 function structureAvis(idProduit) {
   idProduitAvis = idProduit;
-  $('.avis-lesProduits').css({display: "none"});
+  $('.avis-lesProduits').css({ display: "none" });
   $('.structureAvis').addClass('toggleStructureAvis');
 }
 
@@ -257,7 +300,7 @@ function retourListeProduitsAvis() {
   $("#commentaire").val('');
   $("input[type='radio']").prop('checked', false);
   $('.structureAvis').removeClass('toggleStructureAvis');
-  $('.avis-lesProduits').css({display: "block"});
+  $('.avis-lesProduits').css({ display: "block" });
 }
 
 function envoyerAvis() {

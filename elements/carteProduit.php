@@ -1,4 +1,4 @@
-<div class="d-flex justify-content-center align-items-center ms-5 text-center" id="produit">
+<div class="leProduit d-flex justify-content-center align-items-center ms-5 text-center" id="produit">
     <div class="d-flex justify-content-evenly card p-3">
         <?php if (!$produitDisponible): $opacity = "opacity-25"; ?>
             <?php if (isset($produitNotifier)): ?>
@@ -19,7 +19,7 @@
 
             <hr>
 
-            <h1 class="main-heading mb-0"><?= $ref ?></h1>
+            <h1 class="main-heading mb-0" id="leProduit-nom"><?= $ref ?></h1>
             <p><?= $description ?></p>
             <p><?= $prixUnit ?> &euro;</p>
             <div class="d-flex justify-content-center user-ratings">

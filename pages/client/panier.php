@@ -4,7 +4,7 @@
             <div class="col-lg-12 col-md-12 col-12">
                 <h3 class="display-5 mb-2 text-center">Mon Panier</h3>
                 <p class="mb-5 text-center">
-                    <i class="text-info font-weight-bold" id="nbProduitsPanier"><?= $nbProduits ?></i> produit(s) dans votre panier
+                    <i class="font-weight-bold" id="nbProduitsPanier"><?= $nbProduits ?></i> produit(s) dans votre panier
                 </p>
                 <table id="shoppingCart" class="table table-condensed table-responsive">
                     <thead>

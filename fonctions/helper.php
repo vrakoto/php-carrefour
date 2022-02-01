@@ -23,3 +23,12 @@ function keepInputValue(string $variable): string
         return htmlentities($_POST[$variable] ?? '');
     }
 }
+
+function convertDate(string $date, bool $heure = FALSE): string
+{
+    if ($heure === TRUE) {
+        $heure = " à H:i";
+    }
+    $date = new DateTime($date);
+    return $date->format('d/m/Y' . $heure);
+}

@@ -63,6 +63,11 @@ if (!empty($sid)) {
     }
 }
 
+if ($page === 'ajax') {
+    require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'ajaxController' . DIRECTORY_SEPARATOR . 'index.php';
+    exit();
+}
+
 require_once $fonctions . 'helper.php';
 require_once $elements . 'header.php';
 

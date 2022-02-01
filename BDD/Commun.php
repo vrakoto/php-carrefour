@@ -5,7 +5,7 @@ class Commun {
 
     function __construct()
     {
-        $this->pdo = new PDO('sqlite:../BDD/commerce.db', null, null, [
+        $this->pdo = new PDO('mysql:dbname=commerce;host=localhost', 'root', null, [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
         ]);

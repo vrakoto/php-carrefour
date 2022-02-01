@@ -6,6 +6,17 @@ body {
     overflow-x: hidden;
 }
 
+#lesRecherches {
+    display: none;
+}
+
+.categories-populaires h2 {
+    margin-top: 40px;
+    font-weight: 600;
+    text-transform: uppercase;
+    text-align: center;
+}
+
 .separator {
     margin: 3rem 0;
     border-bottom: 1px dashed #fff;
@@ -37,6 +48,13 @@ body {
     transition: all 0.4s;
 }
 
+#fermerMenu {
+    display: none;
+    position: absolute;
+    top: 5px;
+    right: 0;
+}
+
 
 #sidebar.active {
     margin-left: -17rem;
@@ -47,26 +65,6 @@ body {
     margin: 0;
 }
 
-@media (max-width: 768px) {
-    #sidebar {
-        margin-left: -17rem;
-    }
-
-    #sidebar.active {
-        margin-left: 0;
-    }
-
-    #content {
-        width: 100%;
-        margin: 0;
-    }
-
-    #content.active {
-        margin-left: 17rem;
-        width: calc(100% - 17rem);
-    }
-}
-
 .filtrerRechercheProduit {
     display: none !important;
 }
@@ -74,50 +72,19 @@ body {
 
 
 /* Form inscription */
+
 /* html, body {
     background-color: #152733;
     overflow: hidden;
 } */
 
-
-.form-holder {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-}
-
-.form-holder .form-content {
-    position: relative;
-    text-align: center;
-    display: -webkit-box;
-    display: -moz-box;
-    display: -ms-flexbox;
-    display: -webkit-flex;
-    display: flex;
-    -webkit-justify-content: center;
-    justify-content: center;
-    -webkit-align-items: center;
-    align-items: center;
-    margin-bottom: 60px;
-}
-
-.form-content .form-items {
+.form-body {
     border: 3px solid #fff;
     padding: 40px;
-    display: inline-block;
-    width: 100%;
-    min-width: 540px;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
     border-radius: 10px;
-    text-align: left;
-    -webkit-transition: all 0.4s ease;
-    transition: all 0.4s ease;
 }
 
-.form-content h3 {
+.form-body h3 {
     color: #fff;
     text-align: left;
     font-size: 28px;
@@ -125,21 +92,7 @@ body {
     margin-bottom: 5px;
 }
 
-.form-content h3.form-title {
-    margin-bottom: 30px;
-}
-
-.form-content p {
-    color: #fff;
-    text-align: left;
-    font-size: 17px;
-    font-weight: 300;
-    line-height: 20px;
-    margin-bottom: 30px;
-}
-
-
-.form-content input[type=text], .form-content input[type=password] {
+.form-body input {
     width: 100%;
     padding: 9px 20px;
     text-align: left;
@@ -155,7 +108,9 @@ body {
     margin-top: 16px;
 }
 
+
 #produit .card {
+    margin-top: 40px;
     max-width: 260px;
     min-width: 260px;
 
@@ -171,6 +126,7 @@ body {
 
 #produit .hors-stock {
     transform: rotate(45deg);
+    font-size: 40px;
 }
 
 #produit .main-heading {
@@ -347,4 +303,60 @@ body {
     padding: 1.25rem
 }
 
-@media screen and (max-width: 410px) {}
+@media screen and (max-width: 915px) {
+    #produit {
+        margin-left: unset !important;
+    }
+}
+
+@media (max-width: 768px) {
+    #fermerMenu {
+        display: block;
+    }
+
+    #sidebar {
+        margin-left: -17rem;
+        z-index: 999;
+    }
+    
+    #sidebar.active {
+        width: 100%;
+        margin-left: 0;
+    }
+    
+    .nav-link {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+
+    #content {
+        width: 100%;
+        margin: 0;
+    }
+}
+
+/* Page connexion */
+@media screen and (max-width: 580px) {
+
+}
+
+
+@media screen and (max-width: 420px) {
+    #content {
+        padding: 10px !important;
+    }
+
+    .categories-populaires {
+        border: unset !important;
+    }
+
+    .form-body {
+        padding: unset;
+        border: unset;
+        width: 100%;
+    }
+
+    .form-body input {
+        width: 100%;
+    }
+}

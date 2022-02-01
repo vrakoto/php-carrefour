@@ -13,11 +13,19 @@
 <body>
 
     <div class="vertical-nav bg-white h-100" id="sidebar">
-        <div class="py-4 px-3 mb-4 bg-light">
-            <div class="media d-flex align-items-center"><img src="https://picsum.photos/200" alt="..." width="65" class="mr-3 rounded-circle img-thumbnail shadow-sm">
+        <div class="py-4 px-3 bg-light">
+            <div class="media d-flex align-items-center">
+                <?php if ($role === 'CLIENT') : ?>
+                    <i class="fas fa-user fa-3x mr-3 rounded-circle img-thumbnail shadow-sm"></i>
+                    <?php else : if ($role === 'ADMIN') : ?>
+                        <i class="fas fa-tools fa-3x mr-3 rounded-circle img-thumbnail shadow-sm"></i>
+                    <?php else : ?>
+                        <i class="fas fa-glasses fa-3x mr-3 rounded-circle img-thumbnail shadow-sm"></i>
+                    <?php endif ?>
+                <?php endif ?>
                 <div class="media-body">
-                    <h4 class="m-0"><?= $sid ?></h4>
-                    <p class="font-weight-light text-muted mb-0"><?= $role ?? 'Visiteur' ?></p>
+                    <h4 class="m-0 mx-2"><?= $sid ?></h4>
+                    <p class="font-weight-light text-muted mb-0 mx-2"><?= $role ?? 'Visiteur' ?></p>
                 </div>
             </div>
             <p class="font-weight-light text-muted mb-0 mt-3" id="credit"><?= $credit ?></p>
@@ -25,27 +33,33 @@
 
         <!-- <p class="text-gray font-weight-bold text-uppercase px-3 small pb-4 mb-0">Main</p> -->
 
-        <ul class="nav flex-column bg-white mb-0">
-            <?= nav_link('fas fa-home', 'accueil', 'Accueil') ?>
+        <ul class="position-relative nav flex-column bg-white mb-0">
+            <button class="btn btn-danger text-uppercase mx-3" id="fermerMenu">X</button>
 
-            <?php if (!$sid) : ?>
-                <?= nav_link('fas fa-user', 'connexion', 'Se connecter') ?>
-                <?= nav_link('fas fa-user-plus', 'inscription', "S'incrire") ?>
-            <?php else : ?>
-                <?php if ($role === 'CLIENT') : ?>
-                    <?= nav_link('fas fa-shopping-cart', 'panier', 'Mon panier') ?>
-                    <?= nav_link('fas fa-book', 'historiqueAchats', "Mes historiques d'achats") ?>
-                    <?= nav_link('fas fa-star-half-alt', 'donnerAvis', "Donner avis produit") ?>
-                    <?= nav_link('fas fa-bell', 'notification', "Notification") ?>
-                    <?php else : if ($role === 'ADMIN') : ?>
-                        <?= nav_link('fas fa-list', 'listeProduits', 'Liste des produits') ?>
-                        <?= nav_link('fas fa-list', 'listeCategories', 'Liste des catégories') ?>
+            <div class="mt-4">
+                <?= nav_link('fas fa-home', 'accueil', 'Accueil') ?>
+
+                <?php if (!$sid) : ?>
+                    <?= nav_link('fas fa-user', 'connexion', 'Se connecter') ?>
+                    <?= nav_link('fas fa-user-plus', 'inscription', "S'incrire") ?>
+                <?php else : ?>
+                    <?php if ($role === 'CLIENT') : ?>
+                        <?= nav_link('fas fa-shopping-cart', 'panier', 'Mon panier') ?>
+                        <?= nav_link('fas fa-book', 'historiqueAchats', "Mes historiques d'achats") ?>
+                        <?= nav_link('fas fa-star-half-alt', 'donnerAvis', "Donner avis produit") ?>
+                        <?= nav_link('fas fa-bell', 'notification', "Notification") ?>
+                        <?php else : if ($role === 'ADMIN') : ?>
+                            <?= nav_link('fas fa-list', 'listeProduits', 'Liste des produits') ?>
+                            <?= nav_link('fas fa-list', 'listeCategories', 'Liste des catégories') ?>
+                        <?php endif ?>
                     <?php endif ?>
+                    <hr class="mb-0 mt-2">
+                    <?php if ($role === 'CLIENT') : ?>
+                        <?= nav_link('far fa-credit-card', 'credit', 'Ajouter du crédit') ?>
+                    <?php endif ?>
+                    <?= nav_link('fas fa-sign-out-alt', 'deconnexion', 'Se déconnecter') ?>
                 <?php endif ?>
-                <hr class="mb-0 mt-2">
-                <?= nav_link('far fa-credit-card', 'credit', 'Ajouter du crédit') ?>
-                <?= nav_link('fas fa-sign-out-alt', 'deconnexion', 'Se déconnecter') ?>
-            <?php endif ?>
+            </div>
         </ul>
         <!-- <p class="text-gray font-weight-bold text-uppercase px-3 small py-4 mb-0">Administration</p> -->
     </div>
