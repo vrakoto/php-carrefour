@@ -142,7 +142,7 @@ switch ($action) {
         if (empty($erreur)) {
             try {
                 $client->payer();
-                $pdo->creerPanier($sid);
+                $pdo->creerPanier($identifiant);
                 $client->retirerCredit(array_sum($sums));
                 foreach ($lesProduits as $produit) {
                     $idProduit = (int)$produit['idProduit'];

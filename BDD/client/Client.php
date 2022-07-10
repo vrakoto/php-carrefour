@@ -1,17 +1,20 @@
 <?php
 
 class Client extends Commun {
+    private string $identifiant;
+
     function __construct()
     {
         parent::__construct(); // Hériter le PDO
+        $this->identifiant = $_SESSION['identifiant'];
     }
 
     function getMonSolde(): float
     {
-        $req = "SELECT solde FROM utilisateur WHERE id = :utilisateurActuel";
+        $req = "SELECT solde FROM utilisateur WHERE identifiant = :utilisateurActuel";
         $p = $this->pdo->prepare($req);
         $p->execute([
-            'utilisateurActuel' => $_SESSION['id']
+            'utilisateurActuel' => $this->identifiant
         ]);
 
         return $p->fetch()['solde'];
@@ -19,21 +22,21 @@ class Client extends Commun {
 
     function crediter(float $montant): bool
     {
-        $req = "UPDATE utilisateur SET solde = (solde + :credit) WHERE id = :utilisateurActuel";
+        $req = "UPDATE utilisateur SET solde = (solde + :credit) WHERE identifiant = :utilisateurActuel";
         $p = $this->pdo->prepare($req);
         return $p->execute([
             'credit' => $montant,
-            'utilisateurActuel' => $_SESSION['id']
+            'utilisateurActuel' => $this->identifiant
         ]);
     }
 
     function getMonPanier(): array
     {
         $req = "SELECT * FROM panier
-                WHERE idUtilisateur = :utilisateurActuel AND statut = 'EN COURS'";
+                WHERE identifiant_utilisateur = :utilisateurActuel AND statut = 'EN COURS'";
         $p = $this->pdo->prepare($req);
         $p->execute([
-            'utilisateurActuel' => $_SESSION['id']
+            'utilisateurActuel' => $this->identifiant
         ]);
 
         return $p->fetch();
@@ -42,12 +45,12 @@ class Client extends Commun {
     function getMesPaniersAchats(): array
     {
         $req = "SELECT id, date FROM panier
-                WHERE idUtilisateur = :utilisateurActuel
+                WHERE identifiant_utilisateur = :utilisateurActuel
                 AND statut = 'VENDU'
                 ORDER BY id DESC";
         $p = $this->pdo->prepare($req);
         $p->execute([
-            'utilisateurActuel' => $_SESSION['id']
+            'utilisateurActuel' => $this->identifiant
         ]);
         
         return $p->fetchAll();
@@ -58,11 +61,11 @@ class Client extends Commun {
         $req = "SELECT * FROM produit_panier
                 WHERE idPanier =
                     (SELECT id FROM panier
-                    WHERE idUtilisateur = :utilisateurActuel
+                    WHERE identifiant_utilisateur = :utilisateurActuel
                     AND statut = 'EN COURS')";
         $p = $this->pdo->prepare($req);
         $p->execute([
-            'utilisateurActuel' => $_SESSION['id']
+            'utilisateurActuel' => $this->identifiant
         ]);
         
         return $p->fetchAll();
@@ -73,12 +76,12 @@ class Client extends Commun {
         $req = "SELECT * FROM produit_panier
                 WHERE idPanier = (SELECT id FROM panier
                                 WHERE id = :idPanier
-                                AND idUtilisateur = :utilisateurActuel
+                                AND identifiant_utilisateur = :utilisateurActuel
                                 AND statut = 'VENDU')";
         $p = $this->pdo->prepare($req);
         $p->execute([
             'idPanier' => $idPanier,
-            'utilisateurActuel' => $_SESSION['id']
+            'utilisateurActuel' => $this->identifiant
         ]);
 
         return $p->fetchAll();
@@ -99,11 +102,11 @@ class Client extends Commun {
     function supprimerProduitPanier(int $idProduit): bool
     {
         $req = "DELETE FROM produit_panier WHERE idPanier =
-                    (SELECT id FROM panier WHERE idUtilisateur = :utilisateurActuel AND statut = 'EN COURS')
+                    (SELECT id FROM panier WHERE identifiant_utilisateur = :utilisateurActuel AND statut = 'EN COURS')
                 AND idProduit = :idProduit";
         $p = $this->pdo->prepare($req);
         return $p->execute([
-            'utilisateurActuel' => $_SESSION['id'],
+            'utilisateurActuel' => $this->identifiant,
             'idProduit' => $idProduit
         ]);
     }
@@ -112,11 +115,11 @@ class Client extends Commun {
     {
         $req = "SELECT idProduit FROM produit_panier
                 WHERE idProduit = :idProduit
-                AND idPanier = (SELECT id FROM panier WHERE idUtilisateur = :utilisateurActuel AND statut = 'EN COURS')";
+                AND idPanier = (SELECT id FROM panier WHERE identifiant_utilisateur = :utilisateurActuel AND statut = 'EN COURS')";
         $p = $this->pdo->prepare($req);
         $p->execute([
             'idProduit' => $idProduit,
-            'utilisateurActuel' => $_SESSION['id']
+            'utilisateurActuel' => $this->identifiant
         ]);
         return !empty($p->fetch());
     }
@@ -124,11 +127,11 @@ class Client extends Commun {
     function payer(): bool
     {
         $req = "UPDATE panier SET statut = 'VENDU', date = date('now')
-                WHERE idUtilisateur = :utilisateurActuel
+                WHERE identifiant_utilisateur = :utilisateurActuel
                 AND statut = 'EN COURS'";
         $p = $this->pdo->prepare($req);
         $p->execute([
-            'utilisateurActuel' => $_SESSION['id']
+            'utilisateurActuel' => $this->identifiant
         ]);
         return !empty($p->fetch());
     }
@@ -160,7 +163,7 @@ class Client extends Commun {
         $p = $this->pdo->prepare($req);
         return $p->execute([
             'total' => $total,
-            'utilisateurActuel' => $_SESSION['id']
+            'utilisateurActuel' => $this->identifiant
         ]);
     }
 
@@ -170,16 +173,16 @@ class Client extends Commun {
         $req = "SELECT idProduit FROM produit_panier
                 WHERE idPanier IN
                     (SELECT id FROM panier
-                    WHERE idUtilisateur = :utilisateurActuel
+                    WHERE identifiant_utilisateur = :utilisateurActuel
                     AND statut = 'VENDU')
                 AND NOT idProduit IN
                     (SELECT idProduit FROM avis
-                    WHERE idUtilisateur = :utilisateurActuel)
+                    WHERE identifiant_utilisateur = :utilisateurActuel)
                 GROUP BY idProduit";
 
         $p = $this->pdo->prepare($req);
         $p->execute([
-            'utilisateurActuel' => $_SESSION['id']
+            'utilisateurActuel' => $this->identifiant
         ]);
         
         return $p->fetchAll();
@@ -187,21 +190,21 @@ class Client extends Commun {
 
     function notifierProduit(int $idProduit): bool
     {
-        $req = "INSERT INTO notification (idProduit, idUtilisateur) VALUES (:idProduit, :utilisateurActuel)";
+        $req = "INSERT INTO notification (idProduit, identifiant_utilisateur) VALUES (:idProduit, :utilisateurActuel)";
         $p = $this->pdo->prepare($req);
         return $p->execute([
             'idProduit' => $idProduit,
-            'utilisateurActuel' => $_SESSION['id']
+            'utilisateurActuel' => $this->identifiant
         ]);
     }
 
     function retirerNotification(int $idProduit): bool
     {
-        $req = "DELETE FROM notification WHERE idProduit = :idProduit AND idUtilisateur = :utilisateurActuel";
+        $req = "DELETE FROM notification WHERE idProduit = :idProduit AND identifiant_utilisateur = :utilisateurActuel";
         $p = $this->pdo->prepare($req);
         return $p->execute([
             'idProduit' => $idProduit,
-            'utilisateurActuel' => $_SESSION['id']
+            'utilisateurActuel' => $this->identifiant
         ]);
     }
 
@@ -209,11 +212,11 @@ class Client extends Commun {
     {
         $req = "SELECT idProduit FROM notification
                 WHERE idProduit = :idProduit
-                AND idUtilisateur = :utilisateurActuel";
+                AND identifiant_utilisateur = :utilisateurActuel";
         $p = $this->pdo->prepare($req);
         $p->execute([
             'idProduit' => $idProduit,
-            'utilisateurActuel' => $_SESSION['id']
+            'utilisateurActuel' => $this->identifiant
         ]);
 
         return !empty($p->fetch());
@@ -222,11 +225,11 @@ class Client extends Commun {
     function getMesNotifications(): array
     {
         $req = "SELECT * FROM notification
-                WHERE idUtilisateur = :utilisateurActuel
+                WHERE identifiant_utilisateur = :utilisateurActuel
                 AND idProduit IN (SELECT id FROM produit WHERE quantite = 0)";
         $p = $this->pdo->prepare($req);
         $p->execute([
-            'utilisateurActuel' => $_SESSION['id']
+            'utilisateurActuel' => $this->identifiant
         ]);
 
         return $p->fetchAll();
@@ -236,11 +239,11 @@ class Client extends Commun {
     {
         $req = "SELECT * FROM notification
                 JOIN produit on produit.id = notification.idProduit
-                WHERE idUtilisateur = :utilisateurActuel
+                WHERE identifiant_utilisateur = :utilisateurActuel
                 AND idProduit IN (SELECT id FROM produit WHERE quantite > 0)";
         $p = $this->pdo->prepare($req);
         $p->execute([
-            'utilisateurActuel' => $_SESSION['id']
+            'utilisateurActuel' => $this->identifiant
         ]);
 
         return $p->fetchAll();
@@ -255,11 +258,11 @@ class Client extends Commun {
     
     function envoyerAvis(int $idProduit, $commentaire, $note): bool
     {
-        $req = "INSERT INTO avis (idProduit, idUtilisateur, commentaire, note) VALUES (:idProduit, :utilisateurActuel, :commentaire, :note)";
+        $req = "INSERT INTO avis (idProduit, identifiant_utilisateur, commentaire, note) VALUES (:idProduit, :utilisateurActuel, :commentaire, :note)";
         $p = $this->pdo->prepare($req);
         return $p->execute([
             'idProduit' => $idProduit,
-            'utilisateurActuel' => $_SESSION['id'],
+            'utilisateurActuel' => $this->identifiant,
             'commentaire' => $commentaire,
             'note' => $note
         ]);

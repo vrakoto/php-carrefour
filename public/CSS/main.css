@@ -48,7 +48,7 @@ body {
     transition: all 0.4s;
 }
 
-#fermerMenu {
+#fermerMenuMobile {
     display: none;
     position: absolute;
     top: 5px;
@@ -310,7 +310,7 @@ body {
 }
 
 @media (max-width: 768px) {
-    #fermerMenu {
+    #fermerMenuMobile {
         display: block;
     }
 

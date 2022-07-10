@@ -7,7 +7,7 @@ $ref = htmlentities($leProduit['ref']);
 $quantite = (int)$leProduit['quantite'];
 $produitDisponible = ($quantite > 0);
 $opacity = "";
-if ($role === 'CLIENT') {
+if (isset($role) && $role === 'CLIENT') {
     $produitNotifier = (bool)$client->estNotifier($id);
 }
 $prixUnit = (float)$leProduit['prixUnit'];

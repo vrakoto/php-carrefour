@@ -25,7 +25,7 @@
         $commentaire = $avis['commentaire'];
         $note = (int)$avis['note'];
         $date = htmlentities($avis['date']);
-        require $elements . 'varProduit.php';
+        require CARTE_PRODUIT . 'variables.php';
     ?>
         <div class="row">
             <div class="col-sm-7">

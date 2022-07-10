@@ -20,8 +20,8 @@ switch ($action) {
                 $id = (int)$leProduit['id'];
                 $lesAvis = $pdo->getLesAvis($id);
 
-                require $elements . 'varProduit.php';
-                require $elements . 'carteProduit.php';
+                require CARTE_PRODUIT . 'variables.php';
+                require ELEMENTS . 'carteProduit.php';
             }
         } else {
             echo json_encode(['msg' => 'Aucun produit disponible']);

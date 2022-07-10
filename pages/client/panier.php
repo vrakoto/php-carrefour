@@ -20,7 +20,7 @@
                         <?php foreach ($lesProduits as $produit):
                             $id = (int)$produit['idProduit'];
                             $quantiteUtilisateur = (int)$produit['quantite'];
-                            require dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'elements' . DIRECTORY_SEPARATOR . 'varProduit.php';
+                            require CARTE_PRODUIT . 'variables.php';
                             $totalProduit = ($quantiteUtilisateur*$prixUnit);
                         ?>
                             <tr class="leProduit-panier">

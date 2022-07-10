@@ -1,26 +1,26 @@
 <?php
 
 class Inscription extends Commun {
-    private $id;
+    private $identifiant;
     private $ville;
     private $mdp;
     private $mdp_confirm;
 
-    function __construct(string $id, string $ville, string $mdp, string $mdp_confirm)
+    function __construct(string $identifiant, string $ville, string $mdp, string $mdp_confirm)
     {
         parent::__construct(); // Hériter le PDO
-        $this->id = $id;
+        $this->identifiant = $identifiant;
         $this->ville = $ville;
         $this->mdp = $mdp;
         $this->mdp_confirm = $mdp_confirm;
     }
 
-    function identifiantExistant(string $id): bool
+    function identifiantExistant(string $identifiant): bool
     {
-        $req = "SELECT id FROM utilisateur WHERE id = :id";
+        $req = "SELECT identifiant FROM utilisateur WHERE identifiant = :identifiant";
         $p = $this->pdo->prepare($req);
         $p->execute([
-            'id' => $id
+            'identifiant' => $identifiant
         ]);
 
         return !empty($p->fetch());
@@ -34,12 +34,12 @@ class Inscription extends Commun {
     function getErreurs(): array
     {
         $erreurs = [];
-        if (strlen($this->id) < 2) {
-            $erreurs['id'] = "Identifiant trop court";
+        if (strlen($this->identifiant) < 2) {
+            $erreurs['identifiant'] = "Identifiant trop court";
         }
 
-        if ($this->identifiantExistant($this->id)) {
-            $erreurs['id'] = "Identifiant déjà prit";
+        if ($this->identifiantExistant($this->identifiant)) {
+            $erreurs['identifiant'] = "Identifiant déjà prit";
         }
         
         if (strlen($this->ville) < 2) {
@@ -59,10 +59,10 @@ class Inscription extends Commun {
 
     function inscrire(): bool
     {
-        $req = "INSERT INTO utilisateur (id, ville, mdp, role) VALUES (:id, :ville, :mdp, 'CLIENT')";
+        $req = "INSERT INTO utilisateur (identifiant, ville, mdp, role) VALUES (:identifiant, :ville, :mdp, 'CLIENT')";
         $p = $this->pdo->prepare($req);
         return $p->execute([
-            'id' => $this->id,
+            'identifiant' => $this->identifiant,
             'ville' => $this->ville,
             'mdp' => password_hash($this->mdp,  PASSWORD_DEFAULT, ['cost' => 12])
         ]);

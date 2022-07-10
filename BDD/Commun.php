@@ -11,43 +11,48 @@ class Commun {
         ]);
     }
 
-    function verifierAuth(string $id, string $mdp): bool
+    function estConnecte(): bool
     {
-        $req = "SELECT * FROM utilisateur WHERE id = :id";
-        $p = $this->pdo->prepare($req);
-        $p->execute([
-            'id' => $id
-        ]);
-
-        return !empty($p->fetch()) && password_verify($mdp, $this->getUtilisateur($id)['mdp']);
+        return isset($_SESSION['identifiant']);
     }
 
-    function creerPanier(string $idUtilisateur): bool
+    function verifierAuth(string $identifiant, string $mdp): bool
     {
-        $req = "INSERT INTO panier (idUtilisateur, statut) VALUES (:idUtilisateur, 'EN COURS')";
+        $req = "SELECT * FROM utilisateur WHERE identifiant = :identifiant";
+        $p = $this->pdo->prepare($req);
+        $p->execute([
+            'identifiant' => $identifiant
+        ]);
+
+        return !empty($p->fetch()) && password_verify($mdp, $this->getUtilisateur($identifiant)['mdp']);
+    }
+
+    function creerPanier(string $identifiant_utilisateur): bool
+    {
+        $req = "INSERT INTO panier (identifiant_utilisateur, statut) VALUES (:identifiant_utilisateur, 'EN COURS')";
         $p = $this->pdo->prepare($req);
         return $p->execute([
-            'idUtilisateur' => $idUtilisateur,
+            'identifiant_utilisateur' => $identifiant_utilisateur,
         ]);
     }
 
-    function getUtilisateur($id): array
+    function getUtilisateur(string $identifiant): array
     {
-        $req = "SELECT * FROM utilisateur WHERE id = :id";
+        $req = "SELECT * FROM utilisateur WHERE identifiant = :identifiant";
         $p = $this->pdo->prepare($req);
         $p->execute([
-            'id' => $id
+            'identifiant' => $identifiant
         ]);
 
         return $p->fetch();
     }
 
-    function getRole($id): string
+    function getRole(string $identifiant): string
     {
-        $req = "SELECT role FROM utilisateur WHERE id = :id";
+        $req = "SELECT role FROM utilisateur WHERE identifiant = :identifiant";
         $p = $this->pdo->prepare($req);
         $p->execute([
-            'id' => $id
+            'identifiant' => $identifiant
         ]);
         return $p->fetch()['role'];
     }

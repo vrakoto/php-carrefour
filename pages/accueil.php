@@ -12,8 +12,9 @@
                 $id = (int)$leProduit['id'];
                 $lesAvis = $pdo->getLesAvis($id);
 
-                require $elements . 'varProduit.php';
-                require $elements . 'carteProduit.php';
+                require CARTE_PRODUIT . 'variables.php';
+                require $cp_file;
+                // require ELEMENTS . 'carteProduit.php';
             }
             ?>
         </div>

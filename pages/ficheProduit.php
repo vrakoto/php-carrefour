@@ -4,4 +4,4 @@
     </div>
 <?php endif ?>
 
-<?php require $elements . 'carteProduit.php' ?>
+<?php require ELEMENTS . 'carteProduit.php' ?>

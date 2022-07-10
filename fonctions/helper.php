@@ -2,15 +2,18 @@
 
 function nav_link(string $icone, string $lien, string $titre): string
 {
-    $currentURL = array_filter(explode('/', $_SERVER['REQUEST_URI']));
-    $active = "";
-    if ($lien === $currentURL) {
-        $active = "bg-light";
+    $activeBG = '';
+    $activeText = '';
+    $currentLinkController = str_replace('p=', '', $_SERVER['QUERY_STRING']);
+
+    if (str_contains($currentLinkController, $lien)) {
+        $activeBG = "  bg-primary text-white";
+        $activeText = " text-white";
     }
     return <<<HTML
-    <li class="nav-item">
-        <a href="index.php?p=$lien" class="nav-link text-dark font-italic $active">
-            <i class="$icone text-primary"></i>
+    <li class="nav-item $activeBG">
+        <a href="index.php?p=$lien" class="nav-link font-italic text-dark $activeText">
+            <i class="$icone text-primary $activeText"></i>
             $titre
         </a>
     </li>

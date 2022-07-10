@@ -9,7 +9,7 @@
 
     <div class="tab-pane fade show active" id="notification">
         <?php foreach ($mesNotifications as $produit) : $id = (int)$produit['idProduit'];
-            require $elements . 'varProduit.php' ?>
+            require ELEMENTS . 'variables.php' ?>
             <div class="d-flex flex-row flex-wrap justify-content-between align-items-center p-2 bg-white mt-4 px-3 rounded" style="max-width: 500px;">
                 <div class="mr-1">
                     <img class="rounded" src="<?= $imagePrincipale ?>" width="70">
@@ -29,7 +29,7 @@
 
     <div class="tab-pane fade" id="produitsArrives">
         <?php foreach ($produitsArrives as $produit) : $id = (int)$produit['idProduit'];
-            require $elements . 'varProduit.php' ?>
+            require CARTE_PRODUIT . 'variables.php' ?>
             <div class="d-flex flex-wrap align-items-center p-2 bg-white mt-4 px-3 rounded" style="max-width: 500px;">
                 <div class="mr-1">
                     <img class="rounded" src="<?= $imagePrincipale ?>" width="70">
