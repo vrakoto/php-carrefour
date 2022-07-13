@@ -21,7 +21,7 @@
 
     <?php foreach ($lesAvis as $avis) :
         $id = (int)$avis['idProduit'];
-        $idUtilisateur = htmlentities($avis['idUtilisateur']);
+        $identifiantUtilisateur = htmlentities($avis['identifiant_utilisateur']);
         $commentaire = $avis['commentaire'];
         $note = (int)$avis['note'];
         $date = htmlentities($avis['date']);
@@ -33,7 +33,7 @@
                 <div class="review-block">
                     <div class="row">
                         <div class="col-sm-3">
-                            <div class="review-block-name"><?= $idUtilisateur ?></div>
+                            <div class="review-block-name"><?= $identifiantUtilisateur ?></div>
                             <div class="review-block-date"><?= convertDate($date, TRUE) ?></div>
                         </div>
                         <div class="col-sm-9">

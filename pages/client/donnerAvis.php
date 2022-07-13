@@ -1,11 +1,12 @@
 <div class="avis-lesProduits">
     <h4 id="titleAvis"><?= $titre ?></h4>
+
     <?php foreach ($lesProduits as $produit):
         $id = (int)$produit['idProduit'];
         require CARTE_PRODUIT . 'variables.php';
     ?>
 
-    <div class="avisProduit d-flex flex-wrap align-items-center p-2 bg-white mt-4 px-3 rounded" onclick="structureAvis(<?= $id ?>)">
+    <div class="avisProduit d-flex flex-wrap align-items-center p-2 bg-white mt-4 px-3 rounded">
         <div class="mr-1">
             <img class="rounded" src="<?= $imagePrincipale ?>" width="70">
         </div>
@@ -15,6 +16,7 @@
         </div>
 
         <div class="ms-auto">
+            <a class="mx-2" onclick="structureAvis(<?= $id ?>, this)"><i class="fa-solid fa-marker text-success"></i></a>
             <a class="mx-2" href="index.php?p=produit&id=<?= $id ?>"><i class="fas fa-file-alt fa-lg mb-1 text-primary"></i></a>
         </div>
     </div>

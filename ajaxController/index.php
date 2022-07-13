@@ -1,5 +1,23 @@
 <?php
-$action = $_REQUEST['action'];
+if (isset($_REQUEST['action'])) {
+    $action = $_REQUEST['action'];
+}
+
+if ($estConnecte) {
+    $role = $pdo->getRole($monIdentifiant);
+
+    switch ($role) {
+        case 'ADMIN':
+            require_once AJAX . 'admin' . DIRECTORY_SEPARATOR . 'index.php';
+        break;
+
+        case 'CLIENT':
+            require_once AJAX . 'client' . DIRECTORY_SEPARATOR . 'index.php';
+        break;
+    }
+}
+
+// controller commun
 switch ($action) {
     case 'rechercherProduit':
         $leProduit = htmlentities(strtolower($_POST['q']));
@@ -28,3 +46,4 @@ switch ($action) {
         }
     break;
 }
+exit();

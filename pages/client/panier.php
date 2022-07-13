@@ -1,10 +1,11 @@
 <section>
     <div class="container">
+        <a href="index.php?p=accueil" class="text-black"><i class="fas fa-arrow-left mr-2"></i>Retourner en arrière</a>
         <div class="row w-100">
             <div class="col-lg-12 col-md-12 col-12">
                 <h3 class="display-5 mb-2 text-center">Mon Panier</h3>
                 <p class="mb-5 text-center">
-                    <i class="font-weight-bold" id="nbProduitsPanier"><?= $nbProduits ?></i> produit(s) dans votre panier
+                    <i class="font-weight-bold" id="nbProduitsPanier"><?= $nbProduits ?></i> produit<?= ($nbProduits > 1) ? "s" : '' ?> dans votre panier
                 </p>
                 <table id="shoppingCart" class="table table-condensed table-responsive">
                     <thead>
@@ -24,7 +25,7 @@
                             $totalProduit = ($quantiteUtilisateur*$prixUnit);
                         ?>
                             <tr class="leProduit-panier">
-                                <td data-th="Product">
+                                <td>
                                     <div class="row">
                                         <div class="col-md-3 text-left">
                                             <img src="<?= $imagePrincipale ?>" alt="" class="img-fluid d-none d-md-block rounded mb-2 shadow ">
@@ -34,6 +35,7 @@
                                         </div>
                                     </div>
                                 </td>
+                                
                                 <td data-th="Price" id="prix"><?= $prixUnit ?></td>
 
                                 <td data-th="Quantity">
@@ -54,7 +56,7 @@
                     </tbody>
                 </table>
                 <div class="float-right text-right">
-                    <h4>Prix total TTC :</h4>
+                    <h4>Total :</h4>
                     <h1 id="totalPanier"></h1>
                 </div>
             </div>
@@ -62,12 +64,9 @@
         <div class="row mt-4 d-flex align-items-center">
             <?php if ($nbProduits > 0): ?>
                 <div class="col-sm-6 order-md-2 text-right">
-                    <button class="btn btn-primary mb-4 btn-lg pl-5 pr-5" id="payer" onclick="payer()">Payer</button>
+                    <a class="btn btn-primary mb-4 btn-lg pl-5 pr-5" href="index.php?p=paiement">Payer</a>
                 </div>
             <?php endif ?>
-            <div class="col-sm-6 mb-3 mb-m-1 order-md-1 text-md-left">
-                <a href="index.php?p=accueil"><i class="fas fa-arrow-left mr-2"></i> Retournez en arrière</a>
-            </div>
         </div>
     </div>
 </section>

@@ -1,14 +1,6 @@
 <?php
-$role = NULL;
-$credit = NULL;
-
+$inCommonController = FALSE;
 switch ($page) {
-    case 'accueil':
-        $lesProduits = $pdo->getLesProduits();
-        $cp_file = ELEMENTS . 'carteProduit' . DIRECTORY_SEPARATOR . 'cp_visiteur.php';
-        require_once VUES . 'accueil.php';
-    break;
-
     case 'connexion':
         if (isset($_POST['identifiant'], $_POST['mdp'])) {
             $identifiant = htmlentities($_POST['identifiant']);
@@ -49,33 +41,8 @@ switch ($page) {
         require_once VUES_VISITEUR . 'inscription.php';
     break;
 
-    case 'produit':
-        if (isset($_GET['id'])) {
-            $id = (int)$_GET['id'];
-            
-            try {
-                require_once CARTE_PRODUIT . 'variables.php';
-            } catch (\Throwable $th) {
-                $textError = "Produit inexistant";
-                require_once VUES . '404.php';
-                exit();
-            }
-            require_once VUES . 'ficheProduit.php';
-        }
-    break;
-
-    case 'avis':
-        if (isset($_GET['id'])) {
-            $idProduit = (int)$_GET['id'];
-
-            $lesAvis = $pdo->getLesAvis($idProduit);
-            if (count($lesAvis) <= 0) {
-                echo "<h4>Aucun avis sur ce produit</h4>";
-            } else {
-                $noteMoyenne = (float)$pdo->getInfosAvis($idProduit)['noteMoyenne'];
-                $noteRestante = (int)(5-$noteMoyenne);
-                require_once VUES . 'avis.php';
-            }
-        }
+    default:
+        $swapController = $page;
+        $inCommonController = TRUE;
     break;
 }

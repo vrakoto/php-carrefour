@@ -1,5 +1,7 @@
 <div class="leProduit d-flex justify-content-center align-items-center ms-5 text-center" id="produit">
     <div class="d-flex justify-content-evenly card p-3">
+
+        <?php // Notification produit ?>
         <?php if (!$produitDisponible): $opacity = "opacity-25"; ?>
             <?php if (isset($produitNotifier)): ?>
                 <?php if (!$produitNotifier): ?>

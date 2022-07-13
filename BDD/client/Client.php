@@ -1,14 +1,11 @@
 <?php
 
 class Client extends Commun {
-    private string $identifiant;
-
     function __construct()
     {
-        parent::__construct(); // Hériter le PDO
-        $this->identifiant = $_SESSION['identifiant'];
+        parent::__construct();
     }
-
+    
     function getMonSolde(): float
     {
         $req = "SELECT solde FROM utilisateur WHERE identifiant = :utilisateurActuel";
@@ -126,7 +123,7 @@ class Client extends Commun {
 
     function payer(): bool
     {
-        $req = "UPDATE panier SET statut = 'VENDU', date = date('now')
+        $req = "UPDATE panier SET statut = 'VENDU', `date` = NOW()
                 WHERE identifiant_utilisateur = :utilisateurActuel
                 AND statut = 'EN COURS'";
         $p = $this->pdo->prepare($req);
@@ -159,7 +156,7 @@ class Client extends Commun {
 
     function retirerCredit(float $total): bool
     {
-        $req = "UPDATE utilisateur SET solde = (solde - :total) WHERE id = :utilisateurActuel";
+        $req = "UPDATE utilisateur SET solde = (solde - :total) WHERE identifiant = :utilisateurActuel";
         $p = $this->pdo->prepare($req);
         return $p->execute([
             'total' => $total,
@@ -250,12 +247,6 @@ class Client extends Commun {
     }
 
 
-    /* function getLes(int $idProduit): array
-    {
-
-    } */
-
-    
     function envoyerAvis(int $idProduit, $commentaire, $note): bool
     {
         $req = "INSERT INTO avis (idProduit, identifiant_utilisateur, commentaire, note) VALUES (:idProduit, :utilisateurActuel, :commentaire, :note)";

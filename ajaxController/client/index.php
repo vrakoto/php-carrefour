@@ -1,28 +1,9 @@
 <?php
-$action = $_REQUEST['action'];
+define("CLIENT_MODEL", BDD . 'client' . DIRECTORY_SEPARATOR);
+require_once CLIENT_MODEL . 'Client.php';
+$client = new Client;
+
 switch ($action) {
-    case 'crediter':
-        $erreur = '';
-        $montant = (float)$_POST['montant'];
-
-        if ($montant <= 0) {
-            $erreur = "Le montant ne doit pas être inférieur ou égal à 0";
-        }
-
-        if ($montant > 50000) {
-            $erreur = "Le montant ne doit pas être supérieur à 50.000";
-        }
-
-        if (empty($erreur)) {
-            try {
-                $client->crediter($montant);
-            } catch (\Throwable $th) {
-                $erreur = "Erreur général";
-            }
-        }
-        echo $erreur;
-    break;
-
     case 'notifierProduit':
         $erreur = '';
         $idProduit = (int)$_POST['idProduit'];
@@ -55,7 +36,7 @@ switch ($action) {
         }
 
         if ($quantite > $pdo->getLeProduit($idProduit)['quantite']) {
-            $erreur = "La quantité demandée est supérieur à l'offre";
+            $erreur = "La quantité demandée est supérieure à l'offre";
         }
 
         if (empty($erreur)) {
@@ -63,7 +44,7 @@ switch ($action) {
                 $idPanier = $client->getMonPanier()['id'];
                 $client->ajouterProduitPanier($idPanier, $idProduit, $quantite);
             } catch (\Throwable $th) {
-                $erreur = "Erreur général";
+                $erreur = "Erreur interne lors de l'ajout du produit dans le panier";
             }
         }
         echo $erreur;
@@ -121,39 +102,6 @@ switch ($action) {
             $sums[] = ($prixUnit*$quantite);
         }
         echo array_sum($sums);
-    break;
-
-    case 'payer':
-        $erreur = '';
-        $sums = [];
-        $lesProduits = (array)$client->getLesProduitsPanier();
-        foreach ($lesProduits as $produit) {
-            $idProduit = (int)$produit['idProduit'];
-            $prixUnit = (float)$pdo->getLeProduit($idProduit)['prixUnit'];
-            $quantite = (int)$produit['quantite'];
-            $sums[] = ($prixUnit*$quantite);
-        }
-        $total = array_sum($sums);
-
-        if ($total > $monSolde) {
-            $erreur = "Solde insuffisant, veuillez recharger votre crédit.";
-        }
-
-        if (empty($erreur)) {
-            try {
-                $client->payer();
-                $pdo->creerPanier($identifiant);
-                $client->retirerCredit(array_sum($sums));
-                foreach ($lesProduits as $produit) {
-                    $idProduit = (int)$produit['idProduit'];
-                    $quantite = (int)$produit['quantite'];
-                    $client->updateQuantiteProduit($idProduit, $quantite);
-                }
-            } catch (\Throwable $th) {
-                $erreur = "Erreur lors de l'achat";
-            }
-        }
-        echo $erreur;
     break;
 
     case 'envoyerAvis':

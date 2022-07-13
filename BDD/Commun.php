@@ -2,6 +2,7 @@
 
 class Commun {
     protected $pdo;
+    protected string $identifiant;
 
     function __construct()
     {
@@ -9,11 +10,18 @@ class Commun {
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
         ]);
+
+        $this->identifiant = $_SESSION['identifiant'] ?? '';
     }
 
     function estConnecte(): bool
     {
-        return isset($_SESSION['identifiant']);
+        return !empty($this->identifiant);
+    }
+
+    function getMonIdentifiant(): string
+    {
+        return $this->identifiant;
     }
 
     function verifierAuth(string $identifiant, string $mdp): bool

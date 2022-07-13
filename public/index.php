@@ -8,8 +8,10 @@ if (!isset($_REQUEST['p'])) {
 $page = $_REQUEST['p'];
 
 define("ROOT", dirname(__DIR__) . DIRECTORY_SEPARATOR);
+define("AJAX", ROOT . 'ajaxController' . DIRECTORY_SEPARATOR);
 define("PUBLIC_FOLDER", ROOT . DIRECTORY_SEPARATOR);
 define("CONTROLLER", ROOT . 'controller' . DIRECTORY_SEPARATOR);
+define("USER_CONTROLLER", CONTROLLER . 'user' . DIRECTORY_SEPARATOR);
 define("BDD", ROOT . 'BDD' . DIRECTORY_SEPARATOR);
 define("VUES", ROOT . 'pages' . DIRECTORY_SEPARATOR);
 define("VUES_ADMIN", VUES . 'admin' .DIRECTORY_SEPARATOR);
@@ -29,23 +31,27 @@ require_once FONCTIONS . 'helper.php';
 
 $pdo = new Commun;
 $estConnecte = $pdo->estConnecte();
+$monIdentifiant = $pdo->getMonIdentifiant();
+
+if ($page === 'ajax') {
+    require_once AJAX . 'index.php';
+}
+
+$role = NULL;
+$credit = NULL;
 
 ob_start();
+$swapController = '';
+
 if (!$estConnecte) {
     require_once CONTROLLER . 'visiteur.php';
 } else {
-    $identifiant = $_SESSION['identifiant'];
-    $role = $pdo->getRole($identifiant);
-    
-    switch ($role) {
-        case 'ADMIN':
-            require_once CONTROLLER . 'admin.php';
-        break;
-
-        case 'CLIENT':
-            require_once CONTROLLER . 'client.php';
-        break;
-    }
+    require_once USER_CONTROLLER . 'index.php';
 }
+
+if (!empty($swapController)) {
+    require_once CONTROLLER . 'commun.php';
+}
+
 $pageContent = ob_get_clean();
 require_once ELEMENTS . 'layout.php';

@@ -29,14 +29,14 @@
                 <!-- Infos user -->
                 <div class="media-body">
                     <?php if ($estConnecte): ?>
-                        <h4 class="m-0 mx-2"><?= $identifiant ?></h4>
+                        <h4 class="m-0 mx-2"><?= $monIdentifiant ?></h4>
                     <?php endif ?>
                     <p class="font-weight-light text-muted mb-0 mx-2"><?= $role ?? 'Visiteur' ?></p>
                 </div>
             </div>
 
             <!-- Solde restant -->
-            <p class="font-weight-light text-muted mb-0 mt-3" id="credit"><?= $credit ?></p>
+            <p class="font-weight-light text-muted mb-0 mt-3" id="credit"><?= $credit ?? '' ?></p>
         </div>
 
         <ul class="position-relative nav flex-column bg-white mb-0">
@@ -95,5 +95,13 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
     <script src="<?= JS . 'main.js' ?>"></script>
+    
+    <?php if ($role === 'CLIENT'): ?>
+        <script src="<?= JS . 'client.js' ?>"></script>
+    <?php else: ?>
+        <?php if ($role === 'ADMIN'): ?>
+            <script src="<?= JS . 'admin.js' ?>"></script>
+        <?php endif ?>
+    <?php endif ?>
 </body>
 </html>

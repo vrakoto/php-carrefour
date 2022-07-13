@@ -13,8 +13,7 @@
                 $lesAvis = $pdo->getLesAvis($id);
 
                 require CARTE_PRODUIT . 'variables.php';
-                require $cp_file;
-                // require ELEMENTS . 'carteProduit.php';
+                require ELEMENTS . 'carteProduit.php';
             }
             ?>
         </div>

@@ -218,6 +218,11 @@ body {
     cursor: pointer;
 }
 
+.avisProduit img {
+    width: 70px;
+    height: 50px;
+}
+
 .avisProduit:hover {
     box-shadow: 10px 10px 10px 10px #333;
 }
