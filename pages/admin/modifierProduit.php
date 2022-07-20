@@ -51,7 +51,7 @@
 
                         <div class="col-md-12">
                             <label for="prixUnit" class="form-label mt-3 mb-0">Prix Unitaire TTC</label>
-                            <input class="form-control mt-0" id="prixUnit" type="number" name="prixUnit" placeholder="Prix unitaire TTC" value="<?= $prixUnit ?>" required>
+                            <input class="form-control mt-0" id="prixUnit" type="number" name="prixUnit" step="0.01" placeholder="Prix unitaire TTC" value="<?= $prixUnit ?>" required>
                         </div>
 
                         <div class="col-md-12">

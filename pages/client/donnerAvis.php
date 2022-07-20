@@ -1,5 +1,5 @@
 <div class="avis-lesProduits">
-    <h4 id="titleAvis"><?= $titre ?></h4>
+    <h4 id="titleAvis"><?= count($lesProduits) > 0 ? "Sélectionnez un produit" : "Aucun produit disponible pour émettre un avis" ?></h4>
 
     <?php foreach ($lesProduits as $produit):
         $id = (int)$produit['idProduit'];

@@ -1,9 +1,7 @@
-<nav>
-    <div class="nav nav-tabs" id="nav-tab" role="tablist">
-        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#notification">Mes notifications</button>
-        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#produitsArrives">Les produits arrivés</button>
-    </div>
-</nav>
+<div class="nav nav-tabs" id="nav-tab" role="tablist">
+    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#notification">Mes notifications</button>
+    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#produitsArrives">Les produits arrivés</button>
+</div>
 
 <div class="tab-content">
 
@@ -21,7 +19,6 @@
 
                 <div class="ms-auto">
                     <a class="mx-2" href="index.php?p=produit&id=<?= $id ?>"><i class="fas fa-file-alt fa-lg mb-1 text-primary"></i></a>
-                    <a href="javascript:void(0)" onclick="retirerNotification(<?= $id ?>, $(this).parent())"><i class="fa fa-trash fa-lg mb-1 text-danger"></i></a>
                 </div>
             </div>
         <?php endforeach ?>
@@ -49,7 +46,6 @@
 
                 <div class="ms-auto">
                     <a class="mx-2" href="index.php?p=produit&id=<?= $id ?>"><i class="fas fa-file-alt fa-lg mb-1 text-primary"></i></a>
-                    <a href="javascript:void(0)" onclick="retirerNotification(<?= $id ?>, $(this).parent())"><i class="fa fa-trash fa-lg mb-1 text-danger"></i></a>
                 </div>
             </div>
         <?php endforeach ?>

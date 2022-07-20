@@ -2,52 +2,56 @@
 define("CLIENT_MODEL", BDD . 'client' . DIRECTORY_SEPARATOR);
 require_once CLIENT_MODEL . 'Client.php';
 $client = new Client;
+$monSolde = $client->getMonSolde();
 
 switch ($action) {
-    case 'notifierProduit':
-        $erreur = '';
-        $idProduit = (int)$_POST['idProduit'];
-        try {
-            $client->notifierProduit($idProduit);
-        } catch (\Throwable $th) {
-            $erreur = "Erreur général notification";
-        }
-        echo $erreur;
+    case 'updateAccueil':
+        $lesProduits = $pdo->getLesProduits();
+        $lesProduitsPopulaires = $pdo->getLesProduitsPopulaires();
+        $lesNouveauxProduits = $pdo->getLesNouveauxProduits();
+        require_once AJAX_PAGES . 'accueil.php';
     break;
 
-    case 'retirerNotification':
+    case 'crediter':
         $erreur = '';
-        $idProduit = (int)$_POST['idProduit'];
-        try {
-            $client->retirerNotification($idProduit);
-        } catch (\Throwable $th) {
-            $erreur = "Erreur général notification";
-        }
-        echo $erreur;
-    break;
+        $prixMax = 15000;
+        $montant = (float)$_POST['montant'];
 
-    case 'ajouterProduitPanier':
-        $erreur = '';
-        $idProduit = (int)$_POST['idProduit'];
-        $quantite = (int)$_POST['quantite'];
-
-        if ($quantite <= 0) {
-            $erreur = "La quantité ne doit pas être inférieur ou égale à 0";
+        if (empty(trim($montant))) {
+            $erreur = 'Le montant est vide.';
         }
 
-        if ($quantite > $pdo->getLeProduit($idProduit)['quantite']) {
-            $erreur = "La quantité demandée est supérieure à l'offre";
+        if ($montant > $prixMax) {
+            $erreur = 'Le montant est beaucoup trop élevé.';
+        }
+
+        if ($montant <= 0) {
+            $erreur = 'Le montant ne doit pas être inférieur ou égal à 0';
+        }
+
+        if ($monSolde >= $prixMax) {
+            $erreur = 'Votre solde est déjà très élevé.';
         }
 
         if (empty($erreur)) {
             try {
-                $idPanier = $client->getMonPanier()['id'];
-                $client->ajouterProduitPanier($idPanier, $idProduit, $quantite);
+                $client->crediter($montant);
             } catch (\Throwable $th) {
-                $erreur = "Erreur interne lors de l'ajout du produit dans le panier";
+                $erreur = "Erreur interne, impossible de créditer pour le moment.";
             }
         }
+
         echo $erreur;
+    break;
+
+    case 'updateSolde':
+        echo $monSolde . ' €';
+    break;
+
+    case 'updateProduit':
+        $id = (int)$_POST['idProduit'];
+        require_once CARTE_PRODUIT . 'variables.php';
+        require_once ELEMENTS . 'carteProduit.php';
     break;
 
     case 'updateQuantite':
@@ -79,6 +83,109 @@ switch ($action) {
         echo $erreur;
     break;
 
+    case 'updatePanier':
+        $erreur = '';
+        $lesProduits = (array)$client->getLesProduitsPanier();
+        $nbProduits = (int)count($lesProduits);
+
+        $sums = [];
+        foreach ($lesProduits as $produit) {
+            $idProduit = (int)$produit['idProduit'];
+            $quantite = (int)$produit['quantite'];
+            $prixUnit = $pdo->getLeProduit($idProduit)['prixUnit'];
+            $sums[] = ($prixUnit*$quantite);
+        }
+        $total = array_sum($sums);
+
+        $soldeSuffisant = ($monSolde >= $total);
+        if (!$soldeSuffisant) {
+            $erreur = "Votre solde est insuffisant pour effectuer ce paiement, veuillez le recharger.";
+        }
+        require_once AJAX_PAGES . 'panier.php';
+    break;
+
+    case 'paiement':
+        $erreur = '';
+        $sums = [];
+        $lesProduits = $client->getLesProduitsPanier();
+        foreach ($lesProduits as $produit) {
+            $idProduit = (int)$produit['idProduit'];
+            $prixUnit = (float)$pdo->getLeProduit($idProduit)['prixUnit'];
+            $quantite = (int)$produit['quantite'];
+            $sums[] = ($prixUnit*$quantite);
+        }
+        $total = array_sum($sums);
+
+        try {
+            $client->payer();
+            $pdo->creerPanier($monIdentifiant);
+            $client->retirerCredit($total);
+            foreach ($lesProduits as $produit) {
+                $idProduit = (int)$produit['idProduit'];
+                $quantite = (int)$produit['quantite'];
+                $client->updateQuantiteProduit($idProduit, $quantite);
+            }
+            header("Location:index.php?p=panier");
+            exit();
+        } catch (\Throwable $th) {
+            $erreur = "Erreur lors de l'achat";
+        }
+        require_once VUES_CLIENT . 'panier.php';
+    break;
+
+
+    case 'notifierProduit':
+        $erreur = '';
+        $idProduit = (int)$_POST['idProduit'];
+        try {
+            $client->notifierProduit($idProduit);
+        } catch (\Throwable $th) {
+            $erreur = "Erreur général notification";
+            if ($th->getCode() === "23000") {
+                $erreur = "Le produit a déjà été notifié.";
+            }
+        }
+        echo $erreur;
+    break;
+
+    case 'retirerNotification':
+        $erreur = '';
+        $idProduit = (int)$_POST['idProduit'];
+        try {
+            $client->retirerNotification($idProduit);
+        } catch (\Throwable $th) {
+            $erreur = "Erreur général notification";
+        }
+        echo $erreur;
+    break;
+
+    case 'ajouterProduitPanier':
+        $erreur = '';
+        $idProduit = (int)$_POST['idProduit'];
+        $quantite = (int)$_POST['quantite'];
+
+        if ($quantite <= 0) {
+            $erreur = "La quantité ne doit pas être inférieur ou égale à 0";
+        }
+
+        if ($quantite > $pdo->getLeProduit($idProduit)['quantite']) {
+            $erreur = "La quantité demandée est supérieure à l'offre";
+        }
+
+        if (empty($erreur)) {
+            try {
+                $idPanier = $client->getMonPanier();
+                $client->ajouterProduitPanier($idPanier, $idProduit, $quantite);
+            } catch (\Throwable $th) {
+                $erreur = "Erreur interne, le produit n'est sûrement plus disponible";
+                if ($th->getCode() === "23000") {
+                    $erreur = "Le produit a déjà été ajouté dans le panier.";
+                }
+            }
+        }
+        echo $erreur;
+    break;
+
     case 'supprimerProduitPanier':
         $erreur = '';
         $idProduit = (int)$_POST['idProduit'];
@@ -90,18 +197,9 @@ switch ($action) {
         echo $erreur;
     break;
 
-    case 'updateTotal':
-        $idPanier = (int)$client->getMonPanier()['id'];
-        $lesProduits = (array)$client->getLesProduitsPanier();
-
-        (float)$sums = [];
-        foreach ($lesProduits as $produit) {
-            $idProduit = (int)$produit['idProduit'];
-            $quantite = (int)$produit['quantite'];
-            $prixUnit = $pdo->getLeProduit($idProduit)['prixUnit'];
-            $sums[] = ($prixUnit*$quantite);
-        }
-        echo array_sum($sums);
+    case 'listeProduitSansAvis':
+        $lesProduits = $client->produitAchetesSansAvis();
+        require_once VUES_CLIENT . 'donnerAvis.php';
     break;
 
     case 'envoyerAvis':

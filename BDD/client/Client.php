@@ -27,16 +27,17 @@ class Client extends Commun {
         ]);
     }
 
-    function getMonPanier(): array
+    // uniquement celui qui en cours
+    function getMonPanier(): int
     {
-        $req = "SELECT * FROM panier
+        $req = "SELECT id FROM panier
                 WHERE identifiant_utilisateur = :utilisateurActuel AND statut = 'EN COURS'";
         $p = $this->pdo->prepare($req);
         $p->execute([
             'utilisateurActuel' => $this->identifiant
         ]);
 
-        return $p->fetch();
+        return $p->fetch()['id'];
     }
 
     function getMesPaniersAchats(): array
@@ -139,7 +140,7 @@ class Client extends Commun {
         $p = $this->pdo->prepare($req);
         return $p->execute([
             'quantite' => $quantite,
-            'idPanier' => (int)$this->getMonPanier()['id'],
+            'idPanier' => (int)$this->getMonPanier(),
             'idProduit' => $idProduit
         ]);
     }
@@ -165,7 +166,7 @@ class Client extends Commun {
     }
 
     
-    function listeProduitsAchetes(): array
+    function produitAchetesSansAvis(): array
     {
         $req = "SELECT idProduit FROM produit_panier
                 WHERE idPanier IN

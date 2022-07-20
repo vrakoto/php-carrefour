@@ -2,6 +2,7 @@
 $inCommonController = FALSE;
 switch ($page) {
     case 'connexion':
+        $title = "Page connexion";
         if (isset($_POST['identifiant'], $_POST['mdp'])) {
             $identifiant = htmlentities($_POST['identifiant']);
             $mdp = htmlentities($_POST['mdp']);
@@ -18,8 +19,9 @@ switch ($page) {
     break;
 
     case 'inscription':
+        $title = "Page inscription";
+        
         require_once BDD . 'Inscription.php';
-
         if (isset($_POST['identifiant'], $_POST['ville'], $_POST['mdp'], $_POST['mdp_confirm'])) {
             require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'BDD' . DIRECTORY_SEPARATOR . 'Inscription.php';
             $identifiant = htmlentities($_POST['identifiant']);

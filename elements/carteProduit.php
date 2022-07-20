@@ -33,10 +33,16 @@
             </div>
             <a href="index.php?p=avis&id=<?= $id ?>" class="text-muted mx-1"><?= $phraseAvis ?></a>
 
-            <?php if ($role === 'CLIENT' && $produitDisponible && !$client->produitExistantPanier($id)): ?>
+            <?php if ($role === 'CLIENT' && $produitDisponible): ?>
                 <div id="interaction">
-                    <input class="form-control mt-3" type="number" id="quantite" placeholder="Insérer une quantité" min="1" max="<?= $quantite ?>">
-                    <button class="btn btn-danger mt-3" onclick="ajouterProduitPanier(<?= $id ?>, this)"><i class="fas fa-cart-plus"></i> Ajouter le produit</button>
+                    <?php if (!$produitDansPanier): ?>
+                        <input class="form-control mt-3" type="number" id="quantite" placeholder="Insérer une quantité" min="1" max="<?= $quantite ?>">
+                        <button class="btn btn-danger mt-3" onclick="ajouterProduitPanier(<?= $id ?>, this)"><i class="fas fa-cart-plus"></i> Ajouter le produit</button>
+                    <?php else: ?>
+                        <div class="mt-3 text-success">
+                            <i class="fa-solid fa-check"></i> Ajouté dans le panier
+                        </div>
+                    <?php endif ?>
                 </div>
             <?php endif ?>
         </div>

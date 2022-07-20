@@ -6,11 +6,7 @@ body {
     overflow-x: hidden;
 }
 
-#lesRecherches {
-    display: none;
-}
-
-.categories-populaires h2 {
+.accueil-content h2 {
     margin-top: 40px;
     font-weight: 600;
     text-transform: uppercase;
@@ -50,9 +46,6 @@ body {
 
 #fermerMenuMobile {
     display: none;
-    position: absolute;
-    top: 5px;
-    right: 0;
 }
 
 
@@ -70,13 +63,6 @@ body {
 }
 
 
-
-/* Form inscription */
-
-/* html, body {
-    background-color: #152733;
-    overflow: hidden;
-} */
 
 .form-body {
     border: 3px solid #fff;
@@ -340,18 +326,12 @@ body {
     }
 }
 
-/* Page connexion */
-@media screen and (max-width: 580px) {
-
-}
-
-
 @media screen and (max-width: 420px) {
     #content {
         padding: 10px !important;
     }
 
-    .categories-populaires {
+    .accueil-content {
         border: unset !important;
     }
 

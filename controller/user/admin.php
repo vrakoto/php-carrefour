@@ -81,7 +81,7 @@ if ($inUserController === TRUE) {
                     if (!empty($erreurs)) {
                         $erreur = "Le formulaire est incorrect";
                     } else {
-                        $admin->modifierProduit($id, $image, $idCategorie, $ref, $prixUnit, $quantite);
+                        $admin->modifierProduit($id, $image, $idCategorie, $ref, $prixUnit, $quantite, $description);
                         $success = "Produit modifié !";
                     }
                 }

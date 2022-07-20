@@ -2,13 +2,17 @@
 if ($inCommonController === TRUE) {
     switch ($swapController) {
         case 'accueil':
-            $lesProduits = $pdo->getLesProduits();
+            $title = "Accueil";
+            // $lesProduits = $pdo->getLesProduits();
+            // $lesProduitsPopulaires = $pdo->getLesProduitsPopulaires();
+            // $lesNouveauxProduits = $pdo->getLesNouveauxProduits();
             require_once VUES . 'accueil.php';
         break;
     
         case 'produit':
             if (isset($_GET['id'])) {
                 $id = (int)$_GET['id'];
+                $title = 'Produit n°' . $id;
                 
                 try {
                     require_once CARTE_PRODUIT . 'variables.php';
@@ -22,8 +26,10 @@ if ($inCommonController === TRUE) {
         break;
     
         case 'avis':
+            // Tous les avis d'un produit spécifique
             if (isset($_GET['id'])) {
                 $idProduit = (int)$_GET['id'];
+                $title = 'Avis produit n°' . $idProduit;
     
                 $lesAvis = $pdo->getLesAvis($idProduit);
                 if (count($lesAvis) <= 0) {
@@ -37,6 +43,7 @@ if ($inCommonController === TRUE) {
         break;
     
         default:
+            $title = "Projet Commerce - 404 Not Found";
             require_once VUES . '404.php';
         break;
     }

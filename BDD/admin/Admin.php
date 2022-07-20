@@ -32,9 +32,9 @@ class Admin extends Commun {
         ]);
     }
 
-    function modifierProduit(int $id, string $image, string $idCategorie, string $ref, float $prixUnit, int $quantite): bool
+    function modifierProduit(int $id, string $image, string $idCategorie, string $ref, float $prixUnit, int $quantite, string $description): bool
     {
-        $req = "UPDATE produit SET image = :image, idCategorie = :idCategorie, ref = :ref, prixUnit = :prixUnit, quantite = :quantite
+        $req = "UPDATE produit SET image = :image, idCategorie = :idCategorie, ref = :ref, prixUnit = :prixUnit, quantite = :quantite, description = :description
                 WHERE id = :id";
         $p = $this->pdo->prepare($req);
         return $p->execute([
@@ -43,7 +43,8 @@ class Admin extends Commun {
             'idCategorie' => $idCategorie,
             'ref' => $ref,
             'prixUnit' => $prixUnit,
-            'quantite' => $quantite
+            'quantite' => $quantite,
+            'description' => $description
         ]);
     }
 }

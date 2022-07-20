@@ -67,7 +67,24 @@ class Commun {
 
     function getLesProduits(): array
     {
-        $req = "SELECT * FROM produit ORDER by dateAjout DESC";
+        $req = "SELECT * FROM produit ORDER BY dateAjout DESC";
+        $p = $this->pdo->query($req);
+        return $p->fetchAll();
+    }
+
+    function getLesProduitsPopulaires(): array
+    {
+        $req = "SELECT * FROM produit
+                JOIN avis on produit.id = avis.idProduit
+                ORDER BY note DESC
+                LIMIT 4";
+        $p = $this->pdo->query($req);
+        return $p->fetchAll();
+    }
+
+    function getLesNouveauxProduits(): array
+    {
+        $req = "SELECT * FROM produit ORDER by dateAjout DESC LIMIT 4";
         $p = $this->pdo->query($req);
         return $p->fetchAll();
     }

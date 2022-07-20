@@ -8,7 +8,10 @@ if (!isset($_REQUEST['p'])) {
 $page = $_REQUEST['p'];
 
 define("ROOT", dirname(__DIR__) . DIRECTORY_SEPARATOR);
+
 define("AJAX", ROOT . 'ajaxController' . DIRECTORY_SEPARATOR);
+define("AJAX_PAGES", AJAX . 'pages' . DIRECTORY_SEPARATOR);
+
 define("PUBLIC_FOLDER", ROOT . DIRECTORY_SEPARATOR);
 define("CONTROLLER", ROOT . 'controller' . DIRECTORY_SEPARATOR);
 define("USER_CONTROLLER", CONTROLLER . 'user' . DIRECTORY_SEPARATOR);
@@ -25,6 +28,7 @@ define("FONCTIONS", ROOT . 'fonctions' . DIRECTORY_SEPARATOR);
 define("CSS", 'CSS' . DIRECTORY_SEPARATOR);
 define("FONT_AWESOME", CSS . 'fontawesome' . DIRECTORY_SEPARATOR);
 define("JS", 'JS' . DIRECTORY_SEPARATOR);
+define("JS_UTILS", JS . 'utils' . DIRECTORY_SEPARATOR);
 
 require_once BDD . 'Commun.php';
 require_once FONCTIONS . 'helper.php';
@@ -33,12 +37,12 @@ $pdo = new Commun;
 $estConnecte = $pdo->estConnecte();
 $monIdentifiant = $pdo->getMonIdentifiant();
 
+$role = NULL;
+$credit = NULL;
+
 if ($page === 'ajax') {
     require_once AJAX . 'index.php';
 }
-
-$role = NULL;
-$credit = NULL;
 
 ob_start();
 $swapController = '';

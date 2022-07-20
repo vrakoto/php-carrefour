@@ -1,4 +1,3 @@
-// partie admin
 $('#rechercherProduit').on('input', function () {
     const input = $(this).val();
     const inputFilter = input.toLowerCase();

@@ -1,109 +1,91 @@
 $(function () {
-    updatePanier();
+    switch (request_uri) {
+        case 'accueil':
+            updateAccueil();
+        break;
+
+        case 'panier':
+            updatePanier();
+        break;
+    }
 });
 
-function notifierProduit(idProduit, iconeActuel) {
+function updateSolde() {
     let request = $.ajax({
         method: 'post',
-        url: 'index.php?p=ajax&action=notifierProduit',
-        data: 'idProduit=' + idProduit
+        url: 'index.php?p=ajax&action=updateSolde'
     });
 
-    request.done(function(hasError) {
-        let msg = "";
-        $('#messageModal').modal('show');
-
-        if (hasError) {
-            msg = "Erreur lors de la notification du produit";
-        } else {
-            msg = "Produit notifié avec succès";
-            $(iconeActuel).remove();
-        }
-
-        $('#messageModal .modal-title').text(msg);
+    request.done(function (res) {
+        $('#credit').empty();
+        $('#credit').append(res);
     });
-    
-    request.fail(function(jqXHR, textStatus) {
-        console.log("Erreur internal notification");
+
+    request.fail(function (jqXHR, textStatus) {
+        console.log("Erreur interne lors du paiement");
     });
 }
 
-function retirerNotification(idProduit, produitActuel) {
-    let request = $.ajax({
-        method: 'post',
-        url: 'index.php?p=ajax&action=retirerNotification',
-        data: 'idProduit=' + idProduit
-    })
-
-    request.done(function(hasError) {
-        let msg = '';
-        $('#messageModal').modal('show');
-
-        if (hasError) {
-            msg = "Erreur lors de la suppression de la notification";
-        } else {
-            msg = "Notification du produit retiré avec succès";
-            $(produitActuel).remove();
-        }
-
-        $('#messageModal .modal-title').text(msg);
-    });
-    
-    request.fail(function(jqXHR, textStatus) {
-        console.log("Erreur internal notification");
-    });
-}
-
-function ajouterProduitPanier(idProduit, produitActuel) {
-    const quantite = $(produitActuel).parent().find('#quantite').val();
+function crediter() {
+    const montant = parseFloat($('#montant').val());
 
     let request = $.ajax({
         method: 'post',
-        url: 'index.php?p=ajax&action=ajouterProduitPanier',
-        data: 'idProduit=' + idProduit + '&quantite=' + quantite
-    })
+        data: 'montant=' + montant,
+        url: 'index.php?p=ajax&action=crediter'
+    });
 
-    request.done(function(hasError) {
-        let msg = '';
+    request.done(function (hasError) {
+        let msgTitle = '';
+        $('#messageModal .modal-body').empty();
         $('#messageModal').modal('show');
-        
+
         if (hasError) {
-            msg = "Erreur lors de l'ajout du produit dans votre panier";
+            msgTitle = "Erreur lors de l'ajout du produit dans votre panier";
             $('#messageModal .modal-body').text(hasError);
         } else {
-            msg = "Produit ajouté dans le panier !";
-            $(produitActuel).parent().remove();
+            msgTitle = "Votre solde a bien été mise à jour.";
+            updateSolde();
         }
-        
-        $('#messageModal .modal-title').text(msg);
+        $('#messageModal .modal-title').text(msgTitle);
     });
-    
-    request.fail(function(jqXHR, textStatus) {
-        console.log("Erreur internal ajout produit");
+
+    request.fail(function (jqXHR, textStatus) {
+        console.log("Erreur interne lors du créditement");
     });
 }
 
+function paiement() {
+    let request = $.ajax({
+        method: 'post',
+        url: 'index.php?p=ajax&action=paiement'
+    });
 
-/* Update le total panier + nbProduits dans le panier */
-function updatePanier() {
-    const lesProduits = $('.leProduit-panier');
-    $('#nbProduitsPanier').text(lesProduits.length);
+    request.done(function (hasError) {
+        updatePanier();
+        updateSolde();
+    });
 
-    if (lesProduits.length <= 0) {
-        $('#payer').parent().remove();
-    }
+    request.fail(function (jqXHR, textStatus) {
+        console.log("Erreur interne lors du paiement");
+    });
+}
+
+function updateProduit(idProduit, currentProduit) {
+    const produit = $(currentProduit).closest('#produit')
 
     let request = $.ajax({
         method: 'post',
-        url: 'index.php?p=ajax&action=updateTotal'
+        data: 'idProduit=' + idProduit,
+        url: 'index.php?p=ajax&action=updateProduit'
     });
 
-    request.done(function(total) {
-        $('#totalPanier').text(total + ' €');
+    request.done(function (res) {
+        $(produit).replaceWith(res);
     });
 
-    request.fail(function(jqXHR, textStatus) {
-        console.log("Erreur internal");
+    request.fail(function (jqXHR, textStatus) {
+        console.log("Erreur interne lors de l'update du produit");
     });
 }
 
@@ -116,19 +98,105 @@ function updateQuantite(idProduit, prixUnit, produitActuel) {
         data: 'idProduit=' + idProduit + '&prixUnit=' + prixUnit + '&quantite=' + qtyUser
     });
 
-    request.done(function(hasError) {
+    request.done(function (hasError) {
         if (hasError) {
             $('#messageModal').modal('show');
             $('#messageModal .modal-title').text("Erreur lors du changement de quantité");
             // $('#messageModal .modal-body').text(hasError);
         } else {
-            $(produitActuel).closest('.leProduit-panier').find('.totalProduit').text(parseFloat(($(produitActuel).val() * prixUnit).toFixed(2)));
             updatePanier();
         }
     });
 
-    request.fail(function(jqXHR, textStatus) {
+    request.fail(function (jqXHR, textStatus) {
         console.log("Erreur internal update quantité");
+    });
+}
+
+function updatePanier() {
+    let request = $.ajax({
+        method: 'get',
+        url: 'index.php?p=ajax&action=updatePanier'
+    });
+
+    request.done(function (res) {
+        $('#panier').empty();
+        $('#panier').append(res);
+    });
+
+    request.fail(function (jqXHR, textStatus) {
+        console.log("Erreur interne lors de l'update panier");
+    });
+}
+
+
+function notifierProduit(idProduit, iconeActuel) {
+    let request = $.ajax({
+        method: 'post',
+        url: 'index.php?p=ajax&action=notifierProduit',
+        data: 'idProduit=' + idProduit
+    });
+
+    request.done(function (hasError) {
+        if (hasError) {
+            $('#messageModal').modal('show');
+            $('#messageModal .modal-title').text(hasError);
+        } else {
+            updateAccueil();
+            updateProduit(idProduit, iconeActuel);
+        }
+    });
+
+    request.fail(function (jqXHR, textStatus) {
+        console.log("Erreur interne notification");
+    });
+}
+
+function retirerNotification(idProduit, produitActuel) {
+    let request = $.ajax({
+        method: 'post',
+        url: 'index.php?p=ajax&action=retirerNotification',
+        data: 'idProduit=' + idProduit
+    })
+
+    request.done(function (hasError) {
+        if (hasError) {
+            $('#messageModal').modal('show');
+            $('#messageModal .modal-title').text("Erreur lors de la suppression de la notification");
+        } else {
+            updateAccueil();
+            updateProduit(idProduit, produitActuel);
+        }
+    });
+
+    request.fail(function (jqXHR, textStatus) {
+        console.log("Erreur interne notification");
+    });
+}
+
+
+function ajouterProduitPanier(idProduit, produitActuel) {
+    const quantite = $(produitActuel).parent().find('#quantite').val();
+
+    let request = $.ajax({
+        method: 'post',
+        url: 'index.php?p=ajax&action=ajouterProduitPanier',
+        data: 'idProduit=' + idProduit + '&quantite=' + quantite
+    })
+
+    request.done(function (hasError) {
+        if (hasError) {
+            $('#messageModal').modal('show');
+            $('#messageModal .modal-title').text("Erreur lors de l'ajout du produit dans votre panier");
+            $('#messageModal .modal-body').text(hasError);
+        } else {
+            updateAccueil();
+            updateProduit(idProduit, produitActuel);
+        }
+    });
+
+    request.fail(function (jqXHR, textStatus) {
+        console.log("Erreur interne ajout produit");
     });
 }
 
@@ -139,21 +207,20 @@ function supprimerProduitPanier(idProduit, produitActuel) {
         data: 'idProduit=' + idProduit
     });
 
-    request.done(function(hasError) {
+    request.done(function (hasError) {
         if (hasError) {
             $('#messageModal').modal('show');
             // $('#messageModal .modal-body').text(hasError);
         } else {
-            $(produitActuel).closest('.leProduit-panier').remove();
             updatePanier();
+            updateAccueil();
         }
     });
 
-    request.fail(function(jqXHR, textStatus) {
+    request.fail(function (jqXHR, textStatus) {
         console.log("Erreur interne suppression produit");
     });
 }
-
 
 
 /* Partie Avis */
@@ -197,7 +264,7 @@ function envoyerAvis() {
         data: 'idProduit=' + selectedProduit + '&commentaire=' + commentaire + '&note=' + note
     });
 
-    request.done(function(hasError) {
+    request.done(function (hasError) {
         if (hasError) {
             $('#messageModal').modal('show');
             $('#messageModal .modal-title').text("Erreur lors de l'envoie de l'avis");
@@ -210,7 +277,7 @@ function envoyerAvis() {
         }
     });
 
-    request.fail(function(jqXHR, textStatus) {
+    request.fail(function (jqXHR, textStatus) {
         console.log("Erreur internal avis");
     });
 }
